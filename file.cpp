@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+
 #ifndef NOREGEXP
     #include <regex.h>
 #endif

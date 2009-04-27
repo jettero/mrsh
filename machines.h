@@ -22,7 +22,7 @@ class machine {
         machine(char n[80], options *o);
         ~machine();
         void start_pipe();
-        int machine::read_from_pipe(char buf[255]);
+        int read_from_pipe(char buf[255]);
 };
 
 class machines {
