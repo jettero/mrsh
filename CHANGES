@@ -1,3 +1,8 @@
+$Id: CHANGES,v 1.2 2001/12/20 16:24:47 jettero Exp $
+
+Thu Dec 20 11:24:24 EST 2001
+- This didn't compile well under my OLD bsd box... fixed a bunch of stuff
+
 Tue Jul 27 10:57:08 EDT 1999
 - Added word wrapping to the help screen.  The '-s' line was hugely long
   and precipitated the change.

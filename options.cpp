@@ -19,7 +19,9 @@ void options::set_defaults() {
     readretries = PASSES;
     maxpopen    = MAXPIPES;
 
+    #ifndef NOREGEXP
     strcpy(MachineMask, MASK);
+    #endif
     strcpy(HostsFile,   MACHINELIST);
     strcpy(command,     CMD);
     strcpy(rshCommand,  SHL);
@@ -39,8 +41,10 @@ void options::show_help() {
     printf(" -t: The number of seconds mrsh will wait before it gives up \n");
     printf("     and tries a different pipe [%i].\n\n", timeout);
                 
+    #ifndef NOREGEXP
     printf(" -m: A regexp matching word, to specify upon which host to\n");
     printf("     execute [%s].\n\n", MachineMask);
+    #endif
                 
     printf(" -H: The file that contains the names of hosts against which\n");
     printf("     mrsh matches [%s].\n\n", HostsFile); 
@@ -97,7 +101,9 @@ options::options(int argc, char **argv) {
             case 'r': readretries = atoi(optarg); break;
             case 'p': maxpopen    = atoi(optarg); break;
 
+            #ifndef NOREGEXP
             case 'm': strcpy(MachineMask, optarg); break;
+            #endif
             case 'H': strcpy(HostsFile,   optarg); break;
             case 'c': strcpy(command,     optarg); break;
             case 's': strcpy(rshCommand,  optarg); break;

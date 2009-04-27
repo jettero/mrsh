@@ -1,0 +1,8 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:533: checking how to run the C preprocessor
+configure:643: checking for a BSD compatible install
+configure:696: checking whether make sets ${MAKE}
+configure:728: checking for sys/ioctl.h
+configure:766: checking for working const

@@ -1,10 +1,14 @@
+$Id: INSTALL,v 1.2 2001/12/20 16:24:47 jettero Exp $
+
 Installation
 ---------------------------------------------------------------------------
 1) tar -zxf mrsh-#.#.tgz; or gunzip, then a tar -xf...
 
 2) cd mrsh
 
-3) edit the make file above the comment line.  Make those look right for you.
+3) './configure' or 
+   'CCC=g++ ./configure --prefix=/usr/local --without-regexp' or
+   whatever...
 
 4) edit the defaults.h, and set them how you'd like 'em.  If you like.
 
@@ -15,4 +19,6 @@ Installation
 If you have problems, please contact me.
 
 Jettero Heller
-jettero@cs.wmich.edu
+jettero@voltar.org
+
+$Id: INSTALL,v 1.2 2001/12/20 16:24:47 jettero Exp $

@@ -1,0 +1,37 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(file.h)
+
+# $Id: configure.in,v 1.5 2001/12/20 16:25:41 jettero Exp $
+
+if test -z $CCC; then
+    CCC=g++
+fi
+
+dnl Checks for programs.
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+
+dnl Checks for libraries.
+
+dnl Checks for header files.
+AC_CHECK_HEADERS(sys/ioctl.h)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+
+AC_SUBST(CCC)
+
+if test "$with_regex" = "no"; then
+    CFLAGS="$CFLAGS -DNOREGEXP"
+fi
+
+if test "$with_regexp" = "no"; then
+    CFLAGS="$CFLAGS -DNOREGEXP"
+fi
+
+AC_SUBST(CFLAGS)
+
+dnl Checks for library functions.
+
+AC_OUTPUT(Makefile)

@@ -19,7 +19,9 @@ class options {
         int readretries;
         int maxpopen;
 
+        #ifndef NOREGEXP
         char MachineMask[255];
+        #endif
         char HostsFile  [255];
 
         char command    [255];
@@ -27,7 +29,7 @@ class options {
 
         options(int argc, char** argv);
 
-        get_win_width();
+        int get_win_width(); // Steve Rice bug fix: int. ;)
 };
 
 #endif

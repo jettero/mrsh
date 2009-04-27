@@ -1,5 +1,7 @@
 #include <stdio.h>
-#include <regex.h>
+#ifndef NOREGEXP
+    #include <regex.h>
+#endif
 
 #include "options.h"
 #include "machines.h"
@@ -8,7 +10,9 @@
 machines *file::read_file() {
     machines *m = new machines(opts);
     char mname[80];
+    #ifndef NOREGEXP
     regex_t re;
+    #endif
     int count = 0;
 
     FILE *f = fopen(opts->HostsFile, "r");
@@ -20,18 +24,25 @@ machines *file::read_file() {
     }
 
     while(1==fscanf(f, "%s\n", mname) && count < opts->MaxMachines) {
+        #ifndef NOREGEXP
         if(matches(mname, opts->MachineMask, &re)) {
+        #endif    
             m->push(mname);
+        #ifndef NOREGEXP
             count ++;
         }
+        #endif    
     }
 
+    #ifndef NOREGEXP
     regfree(&re);
+    #endif 
     fclose(f);
 
     return m;
 }
 
+#ifndef NOREGEXP
 int file::matches(const char *mname, const char *regexp, regex_t *re) {
     int status;
 
@@ -47,6 +58,7 @@ int file::matches(const char *mname, const char *regexp, regex_t *re) {
 
     return !status;
 }
+#endif 
 
 file::file(options *o) {
     opts = o;

@@ -1,9 +1,8 @@
-# Generated automatically from Makefile.in by configure.
 # $Id: Makefile.in,v 1.7 2001/12/20 16:57:57 jettero Exp $
 
 shell=/bin/bash
 
-install_dir=/usr/local/bin
+install_dir=@prefix@/bin
 installed_owner=root
 installed_group=bin
 installed_perms=755
@@ -16,9 +15,9 @@ lname=${name}-${version}
 ppacked=${lname}.tar
 fpacked=${lname}.tar.gz
 
-CCC=g++
+CCC=@CCC@
 
-CPPFLAGS=-DVERSION="\"${version}\"" -DBDATE="\"${DATESTR}\"" 
+CPPFLAGS=-DVERSION="\"${version}\"" -DBDATE="\"${DATESTR}\"" @CFLAGS@
 
 .SUFFIXES: .cpp .o
 
