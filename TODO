@@ -1,0 +1,3 @@
+- reverse regular expressions.
+- make multiple -m (match) switches algebraic.  so -m csx and -m cs5 would
+  result in -m "csx\|cs5".  If ya follow...

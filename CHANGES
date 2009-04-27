@@ -1,0 +1,4 @@
+- We nolonger have to worry about sag faults from running outta pipes.
+- Mrsh now recognizes your terminal width (if your terminal supports this
+  politely.
+
