@@ -10,7 +10,7 @@ installed_perms=755
 ###############################################################################
 
 name=mrsh
-version=1.2.1
+version=1.2.3
 lname=${name}-${version}
 ppacked=${lname}.tar
 fpacked=${lname}.tar.gz
