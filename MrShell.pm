@@ -5,4 +5,4 @@ use warnings;
 use IPC::System::Simple;
 use Term::ReadLine;
 
-our $VERSION = '0.1000';
+our $VERSION = '2.0000';
