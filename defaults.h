@@ -7,4 +7,4 @@
 #define MASK        ".*"
 #define MACHINELIST "/etc/hosts.equiv"
 #define CMD         "uptime"
-#define SHL         "ssh -qx"
+#define SHL         "ssh -qx -o 'BatchMode yes' -o 'StrictHostKeyChecking no'"
