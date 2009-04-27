@@ -2,3 +2,5 @@ config.cache
 config.status
 Makefile
 config.log
+*.o
+mrsh
