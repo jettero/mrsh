@@ -1,0 +1,8 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use APP::MrShell;
+
+my $shell = new MrShell;
+   $shell->run;
