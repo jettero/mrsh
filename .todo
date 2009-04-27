@@ -1,0 +1,14 @@
+<todo version="0.1.19">
+    <note priority="medium" time="1240858768">
+        there should be a non-shell mode
+    </note>
+    <note priority="medium" time="1240858777">
+        there should be a readline shell
+    </note>
+    <note priority="medium" time="1240858796">
+        there should be a single line result mode and a multiline mode, ... both of which work concurrently
+    </note>
+    <note priority="medium" time="1240858822">
+        commands should fire at groups, which can be configured from inside the shell
+    </note>
+</todo>
