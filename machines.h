@@ -32,6 +32,7 @@ class machines {
 
     public:
         void open_all_pipes();
+        void kill_all_pipes();
          int read_all_pipes();
         void push(char name[80]);
         void show_em();

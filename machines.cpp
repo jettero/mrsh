@@ -68,14 +68,28 @@ int machine::read_from_pipe(char buf[255]) {
     return ret;
 }
 
-// all machines
+//
+// all machines //////////////////////////////////////////////////////
+//
+
 machines::machines(options *o) {
     opts = o;
     listHead = 0;
 }
 
+void machines::kill_all_pipes() {
+    machine *tmp = listHead;
+
+    while(tmp) {
+        if(!tmp->has_pipe()) {
+            tmp->kill_pipe();
+            tmp->was_read();
+        }
+        tmp = tmp->mykid;
+    }
+}
+
 void machines::open_all_pipes() {
-    int counter  = 0;
     machine *tmp = listHead;
 
     while(tmp) {

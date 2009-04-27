@@ -1,19 +1,32 @@
-install_dir=/usr/local/sysadmin/bin2
-installed_owner=0
-installed_group=sysadmin
-installed_perms=110
+install_dir=/usr/local/bin
+installed_owner=root
+installed_group=root
+installed_perms=755
 
 ###############################################################################
 
 name=mrsh
-version=1.1a
+version=1.2b
 lname=${name}-${version}
 ppacked=${lname}.tar
 fpacked=${lname}.tar.gz
 
+CCC=g++
+
+CPPFLAGS=-DVERSION="\"${version}\"" -DBDATE="\"${DATESTR}\""
+
+.SUFFIXES: .cpp .o
+
+.cpp.o: 
+	@${CCC} ${CPPFLAGS} -c $<
+	@echo Compiling $*.o
+
 headers=options.h machines.h options.h file.h
 
-all: ${name}
+all:
+	make real_all "DATESTR=`date '+%B %d, %Y'`"
+
+real_all: ${name}
 
 wpack: pack
 	[ ${USER} = jettero ] && \
@@ -32,11 +45,15 @@ machines.o: machines.cpp ${headers}
 ${name}.o:   ${name}.cpp ${headers}
 
 ${name}: ${objs}
-	g++ -o ${name} ${objs}
+	@g++ -o ${name} ${objs}
+	@echo Compiling ${name}
 
 clean:
 	rm -f ${name} *.o core fil
 
 install: all
-	sudo install -s -o 0 -g sysadmin -m 110 ${name} ${install_dir}/${name}
-	make pack
+	install -d -o ${installed_owner} -g ${installed_group} \
+             -m ${installed_perms} ${install_dir}
+	install -s -o ${installed_owner} -g ${installed_group} \
+             -m ${installed_perms} ${name} ${install_dir}/${name}
+	make clean

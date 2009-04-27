@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <stropts.h>
 
 #include "options.h"
 
@@ -27,6 +26,11 @@ void options::set_defaults() {
 }
 
 void options::show_help() {
+    char str[160];
+    int l,i,j;
+
+    printf("Mrsh version %s was compiled on %s.\n", 
+        VERSION, BDATE);
     printf("Usage: mrsh [options] -c \"command\"\n\n");
 
     printf(" -n: Maximum number of machines upon which to execute. [%i]\n\n", 
@@ -43,7 +47,15 @@ void options::show_help() {
     printf(" -c: The command you wish to execute [%s].\n\n", command);
                 
     printf(" -s: The command with which you wish to remotely\n");
-    printf("     shell [%s].\n\n", rshCommand);
+    strcpy(str,"     shell ["); strcat(str,rshCommand); strcat(str, "].\n\n");
+    if( (l=strlen(str)) > 79) {
+        for(i=l+5; i>80 || str[i-5]!=' '; i--) 
+            str[i] = str[i-5];
+        str[i-5]='\n';
+        for(j=-4; j<1; j++) 
+            str[i+j] = ' ';
+    }
+    printf(str);
                 
     printf(" -1: Output should be formatted for a single line [%s].\n\n", 
         (singleline) ? "yes":"no"

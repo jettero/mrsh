@@ -1,4 +1,20 @@
+Tue Jul 27 10:57:08 EDT 1999
+- Added word wrapping to the help screen.  The '-s' line was hugely long
+  and precipitated the change.
+
+- Dave Lorand pointed out that the Makefile didn't work on a few different
+  kinds of machines, because I was relying on a default rule for '.cpp.o'.
+  Most places have it... *shrug*  I wrote down what I meant to say in the
+  Makefile.
+
+Mon Jul 19 21:09:47 EDT 1999
+- Rrzanny@cs.wmich.edu pointed out that cntrl-c-ing outta Mrsh resulted in
+  dozens of stray rsh/ssh procs.  That was no good.
+- There's now a defaults.h that describes the default states of the switches.
+- There's a new install document.
+- The date and version number are shown in Mrsh' help screen
+
+Mon Jul 19 21:09:43 EDT 1999
 - We nolonger have to worry about sag faults from running outta pipes.
 - Mrsh now recognizes your terminal width (if your terminal supports this
   politely.
-
