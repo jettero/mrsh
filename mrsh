@@ -2,7 +2,59 @@
 
 use strict;
 use warnings;
-use APP::MrShell;
+use Getopt::Long;
+use Pod::Usage;
 
-my $shell = new MrShell;
-   $shell->run;
+use App::MrShell;
+
+my @hosts;
+GetOptions("--host|H=s@"=>\@hosts, "--help|h"=>sub { pod2usage(-verbose=>1) });
+
+pod2usage unless @hosts and @command;
+
+my $shell =
+
+    App::MrShell
+        -> new
+        -> set_hosts(@hosts)
+        -> run_command(@ARGV);
+
+sleep 1 while $shell->show_result;
+
+__END__
+
+=head1 NAME
+
+mrsh - Mr. Shell runs a command on multiple hosts
+
+=head1 SYNOPSIS
+
+    mrsh --host blarg1 --host blarg2 uptime
+
+=head1 DESCRIPTION
+
+=over
+
+=item B<--host> B<-H>
+
+Names of hosts upon which to run commands.
+
+=back
+
+=head1 AUTHOR
+
+Paul Miller C<< <jettero@cpan.org >>
+
+L<http://github.com/jettero>
+
+=head1 COPYRIGHT
+
+Copyright 2009 - Paul Miller
+
+Released as GPL, like the original Mr. Shell circa 1997.
+
+=head1 SEE ALSO
+
+perl(1), L<IO::Select>
+
+=cut
