@@ -8,6 +8,7 @@ use Pod::Usage;
 use App::MrShell;
 
 my @hosts;
+Getopt::Long::Configure("bundling"); # make switches case sensitive (and turn on bundling)
 GetOptions("--host|H=s@"=>\@hosts, "--help|h"=>sub { pod2usage(-verbose=>1) });
 
 pod2usage unless @hosts and @ARGV;
