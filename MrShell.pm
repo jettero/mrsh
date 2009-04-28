@@ -28,7 +28,7 @@ sub read_config {
         keys %{ $this->{_conf}{groups} }
     };
 
-    if( my ($s) = grep {defined} @{$this->{_conf}}{qw(ssh_command ssh-command sshcommand ssh)} ) {
+    if( my ($s) = grep {defined} @{$this->{_conf}{options}}{qw(ssh_command ssh-command sshcommand ssh)} ) {
         $this->{_ssh_cmd} = [ grep {defined} ($s =~ m/["']([^"']*?)["']|(\S+)/g) ];
     }
 
@@ -41,7 +41,7 @@ sub set_hosts {
 
     $this->{hosts} = [
        map { split m/\s*,\s*/ }
-       map { my $k = $_; $k =~ s/^\@// ? @{$this->{gropus}{$k}||[]} : $_ }
+       map { my $k = $_; $k =~ s/^\@// ? @{$this->{groups}{$k} or die "couldn't find group: \@$k\n"} : $_ }
        @_
     ];
 
