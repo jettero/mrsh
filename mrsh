@@ -10,12 +10,13 @@ use App::MrShell;
 my @hosts;
 GetOptions("--host|H=s@"=>\@hosts, "--help|h"=>sub { pod2usage(-verbose=>1) });
 
-pod2usage unless @hosts and @command;
+pod2usage unless @hosts and @ARGV;
 
 my $shell =
 
     App::MrShell
         -> new
+        -> read_config("$ENV{HOME}/.mrshrc")
         -> set_hosts(@hosts)
         -> run_command(@ARGV);
 

@@ -3,20 +3,37 @@ package App::MrShell;
 use strict;
 use warnings;
 
-# use Config::Tiny; # this is probably smarter for groups than DBM::Deep
-# use DBM::Deep;
-# use Term::ReadLine;
+use Config::Tiny;
+# use Term::ReadLine; # laterz
 
 use IO::Select;
 use IPC::Open3 qw(open3);
 
 our $VERSION = '2.0000';
+our @SSH_COMMAND = (qw(ssh -qx -o), 'BatchMode yes', '-o', 'StrictHostKeyChecking no');
 
 sub new { bless {} }
 
+sub read_config {
+    my ($this, $that) = @_;
+
+    $this->{_conf} = Config::Tiny->read($that) if -f $that;
+    $this->{groups} = {
+        map { $_ => [split m/\s*,\s*/, $this->{_conf}{groups}{$_}] }
+        keys %{ $this->{_conf}{groups} }
+    };
+
+    $this;
+}
+
 sub set_hosts {
     my $this = shift;
-       $this->{_hosts} = \@_;
+
+    $this->{hosts} = [
+       map { split m/\s*,\s*/ }
+       map { my $k = $_; $k =~ s/^\@// ? @{$this->{gropus}{$k}||[]} : $_ }
+       @_
+    ];
 
     $this;
 }
