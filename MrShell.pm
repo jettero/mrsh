@@ -3,8 +3,10 @@ package App::MrShell;
 use strict;
 use warnings;
 
+use POSIX;
 use Config::Tiny;
 use POE qw( Wheel::Run );
+use Term::ANSIColor qw(:constants);
 
 our $VERSION = '2.0000';
 our @SSH_COMMAND = (qw(ssh -qx -o), 'BatchMode yes', '-o', 'StrictHostKeyChecking no');
@@ -26,8 +28,8 @@ sub read_config {
         keys %{ $this->{_conf}{groups} }
     };
 
-    if( my ($s) = @{$this->{_conf}}{qw(ssh_command ssh-command sshcommand ssh)} ) {
-        $this->{_ssh_cmd} = [ grep {defined $_} $s =~ m/["']([^"']*?)["']|(\S+)/g ];
+    if( my ($s) = grep {defined} @{$this->{_conf}}{qw(ssh_command ssh-command sshcommand ssh)} ) {
+        $this->{_ssh_cmd} = [ grep {defined} ($s =~ m/["']([^"']*?)["']|(\S+)/g) ];
     }
 
     $this;
@@ -48,7 +50,7 @@ sub set_hosts {
         $l = $_ if $_>$l
     }
 
-    $this->{_host_width} = $l+1;
+    $this->{_host_width} = $l;
     $this;
 }
 # }}}
@@ -70,9 +72,10 @@ sub std_msg {
     my $fh    = shift;
     my $msg   = shift;
 
-    print scalar localtime,
-        sprintf('%3d %*s', $cmdno, $this->{_host_width}, "$host($fh): "),
-            $msg, "\n";
+    print strftime('%H:%M:%S ', localtime),
+        sprintf('%2d %-*s', $cmdno, $this->{_host_width}+5, "$host($fh): "),
+            ($fh==2 ? RED : $fh==0 ? (BOLD, BLACK) : () ),
+                $msg, RESET, "\n";
 }
 # }}}
 
@@ -103,7 +106,7 @@ sub close {
     my ($kid, $host, $cmdno, @c) = @{ delete $this->{_wid}{$wid} };
     delete $this->{_pid}{ $kid->PID };
 
-    $this->std_msg($host, $cmdno, 0, '--eof--');
+  # $this->std_msg($host, $cmdno, 0, '--eof--');
     $this->start_one($_[KERNEL] => $host, $cmdno+1, @c) if @c;
 }
 # }}}
