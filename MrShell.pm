@@ -4,20 +4,19 @@ use strict;
 use warnings;
 
 use Config::Tiny;
-use Symbol qw(gensym);
 use POE qw( Wheel::Run );
 
 our $VERSION = '2.0000';
 our @SSH_COMMAND = (qw(ssh -qx -o), 'BatchMode yes', '-o', 'StrictHostKeyChecking no');
 
+# new {{{
 sub new {
-    my $this = bless {};
-
-    # POE session stuff here
+    my $this = bless { hosts=>[], cmd=>[], _ssh_cmd=>[@SSH_COMMAND] };
 
     $this;
 }
-
+# }}}
+# read_config {{{
 sub read_config {
     my ($this, $that) = @_;
 
@@ -27,9 +26,14 @@ sub read_config {
         keys %{ $this->{_conf}{groups} }
     };
 
+    if( my ($s) = @{$this->{_conf}}{qw(ssh_command ssh-command sshcommand ssh)} ) {
+        $this->{_ssh_cmd} = [ grep {defined $_} $s =~ m/["']([^"']*?)["']|(\S+)/g ];
+    }
+
     $this;
 }
-
+# }}}
+# set_hosts {{{
 sub set_hosts {
     my $this = shift;
 
@@ -39,19 +43,115 @@ sub set_hosts {
        @_
     ];
 
+    my $l = 0;
+    for( map { length $_ } @{ $this->{hosts} } ) {
+        $l = $_ if $_>$l
+    }
+
+    $this->{_host_width} = $l+1;
     $this;
 }
-
+# }}}
+# run_command {{{
 sub run_command {
     my $this = shift;
 
-    # POE::Wheel::Run stuff here
+    push @{$this->{cmd}}, \@_;
 
     $this;
 }
+# }}}
 
-sub show_result {
+# std_msg {{{
+sub std_msg {
+    my $this  = shift;
+    my $host  = shift;
+    my $cmdno = shift;
+    my $fh    = shift;
+    my $msg   = shift;
+
+    print scalar localtime,
+        sprintf('%3d %*s', $cmdno, $this->{_host_width}, "$host($fh): "),
+            $msg, "\n";
+}
+# }}}
+
+# line {{{
+sub line {
+    my $this = shift;
+    my $fh   = shift;
+    my ($line, $wid) = @_[ ARG0, ARG1 ];
+    my ($kid, $host, $cmdno) = @{$this->{_wid}{$wid}};
+
+    $this->std_msg($host, $cmdno, $fh, $line);
+}
+# }}}
+
+# sigchld {{{
+sub sigchld {
+    my $this = shift;
+    my ($kid, $host, $cmdno, @c) = @{ delete $this->{_pid}{ $_[ARG1] } || return };
+    delete $this->{_wid}{ $kid->ID };
+
+    $this->std_msg($host, $cmdno, 0, '--error--');
+}
+# }}}
+# close {{{
+sub close {
+    my $this = shift;
+    my $wid  = $_[ARG0];
+    my ($kid, $host, $cmdno, @c) = @{ delete $this->{_wid}{$wid} };
+    delete $this->{_pid}{ $kid->PID };
+
+    $this->std_msg($host, $cmdno, 0, '--eof--');
+    $this->start_one($_[KERNEL] => $host, $cmdno+1, @c) if @c;
+}
+# }}}
+
+# start_one {{{
+sub start_one {
+    my ($this, $kernel => $host, $cmdno, $cmd, @next) = @_;
+
+    my $kid = POE::Wheel::Run->new(
+        Program     => [ @{$this->{_ssh_cmd}} => ($host, @$cmd) ],
+        StdoutEvent => "child_stdout",
+        StderrEvent => "child_stderr",
+        CloseEvent  => "child_close",
+    );
+
+    $kernel->sig_child( $kid->PID, "child_signal" );
+
+    my $info = [ $kid, $host, $cmdno, @next ];
+    $this->{_wid}{ $kid->ID } = $this->{_pid}{ $kid->PID } = $info;
+}
+# }}}
+
+# _poe_start {{{
+sub _poe_start {
     my $this = shift;
 
-    0;
+    my @c = @{ delete $this->{cmd} || [] };
+    if( @c ) {
+        for my $host (@{ $this->{hosts} }) {
+            $this->start_one($_[KERNEL] => $host, 1, @c);
+        }
+    }
 }
+# }}}
+# run_poe {{{
+sub run_poe {
+    my $this = shift;
+
+    $this->{_session} = POE::Session->create( inline_states => {
+        _start       => sub { $this->_poe_start(@_) },
+        child_stdout => sub { $this->line(1, @_) },
+        child_stderr => sub { $this->line(2, @_) },
+        child_close  => sub { $this->close(@_) },
+        child_signal => sub { $this->sigchld(@_) },
+    });
+
+    POE::Kernel->run();
+
+    $this
+}
+# }}}

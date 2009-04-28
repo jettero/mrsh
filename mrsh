@@ -16,10 +16,9 @@ App::MrShell
 
     -> new
     -> read_config("$ENV{HOME}/.mrshrc")
-
     -> set_hosts(@hosts)  # tell Mr. Shell where to run things
-    -> run_command(@ARGV) # start a command
-    -> mail_loop;         # tell POE to do what POE does
+    -> run_command(@ARGV) # queue a command
+    -> run_poe;           # tell POE to do what POE does
 
 __END__
 

@@ -1,4 +1,7 @@
 <todo version="0.1.19">
+    <note priority="high" time="1240931521" done="1240940272">
+        run_command should queue commands that can be run consequtively on each host
+    </note>
     <note priority="medium" time="1240858768">
         there should be a non-shell mode
     </note>
@@ -7,8 +10,5 @@
     </note>
     <note priority="medium" time="1240858796">
         there should be a single line result mode and a multiline mode, ... both of which work concurrently
-    </note>
-    <note priority="medium" time="1240858822">
-        commands should fire at groups, which can be configured from inside the shell
     </note>
 </todo>
