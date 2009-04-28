@@ -4,15 +4,19 @@ use strict;
 use warnings;
 
 use Config::Tiny;
-# use Term::ReadLine; # laterz
-
-use IO::Select;
-use IPC::Open3 qw(open3);
+use Symbol qw(gensym);
+use POE qw( Wheel::Run );
 
 our $VERSION = '2.0000';
 our @SSH_COMMAND = (qw(ssh -qx -o), 'BatchMode yes', '-o', 'StrictHostKeyChecking no');
 
-sub new { bless {} }
+sub new {
+    my $this = bless {};
+
+    # POE session stuff here
+
+    $this;
+}
 
 sub read_config {
     my ($this, $that) = @_;
@@ -40,6 +44,8 @@ sub set_hosts {
 
 sub run_command {
     my $this = shift;
+
+    # POE::Wheel::Run stuff here
 
     $this;
 }
