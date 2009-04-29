@@ -10,12 +10,12 @@ use App::MrShell;
 my @hosts;
 Getopt::Long::Configure("bundling"); # make switches case sensitive (and turn on bundling)
 GetOptions("--host|H=s@"=>\@hosts, "--help|h"=>sub { pod2usage(-verbose=>1) });
-
-pod2usage unless @hosts and @ARGV;
+pod2usage @ARGV;
 
 App::MrShell
 
     -> new
+    -> usage_error(sub {pod2usage(-verbose=>2)})
     -> read_config("$ENV{HOME}/.mrshrc")
     -> set_hosts(@hosts)  # tell Mr. Shell where to run things
     -> run_command(@ARGV) # queue a command
