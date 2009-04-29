@@ -1,0 +1,10 @@
+Mr. Shell runs a command on multiple hosts and returns results meaningfully.
+
+bash$ ./mrsh -H corky -H wisp -- ls -hald /etc/network/interfaces /etc/openvpn/vhb
+
+07:18:00 cn:1  corky: -rwxr-xr-x 1 root root 217 2008-06-24 08:31 /etc/rc.local
+07:18:01 cn:1  wisp:  -rwxr-xr-x 1 root root 379 2008-06-26 06:30 /etc/rc.local
+07:19:41 cn:1  corky: -rw-r--r-- 1 root    root  143 2008-05-18 19:47 /etc/network/interfaces
+07:19:41 cn:1  corky: drwxr-x--- 2 openvpn root 4.0K 2007-09-22 09:36 /etc/openvpn/vhb
+07:19:42 cn:1  wisp:  lrwxrwxrwx 1 root root 15 2008-11-28 14:58 /etc/network/interfaces -> interfaces.vhbw
+07:19:42 cn:1  wisp:  [ERR] ls: cannot access /etc/openvpn/vhb: No such file or directory

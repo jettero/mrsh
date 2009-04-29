@@ -1,0 +1,7 @@
+Changes
+Makefile.PL
+MANIFEST
+mrsh
+MrShell.pm
+README
+t/01_load.t
