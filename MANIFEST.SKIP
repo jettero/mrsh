@@ -3,3 +3,4 @@
 ^MANIFEST\.SKIP$
 ^\.pm-desc.html$
 ^\.st$
+^\.todo$
