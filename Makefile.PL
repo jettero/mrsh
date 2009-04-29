@@ -29,7 +29,7 @@ WriteMakefile(
         LICENSE => 'GPL',
     ) : ()),
 
-    clean => { FILES => 'FILES dist' },
+    clean => { FILES => 'FILES dist test_file' },
 );  
 
 my $test_ssh = prompt("Run shell tests (runs uptime and touches files in /tmp)?", "n");
@@ -53,4 +53,4 @@ unless( $test_ssh =~ m/n/i ) {
         warn "could not find uptime and touch, skipping tests despite your wishes\n";
     }
 
-} else { unlink "FILES" }
+}
