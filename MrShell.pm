@@ -19,18 +19,45 @@ sub new {
     $this;
 }
 # }}}
+
+# _process_space_delimited {{{
+sub _process_space_delimited {
+    my $this = shift;
+
+    return
+        grep {defined} ($_[0] =~ m/["']([^"']*?)["']|(\S+)/g)
+}
+# }}}
+# _process_hosts {{{
+sub _process_hosts {
+    my $this = shift;
+
+    return
+       map { my $k = $_; $k =~ s/^\@// ? @{$this->{groups}{$k} or die "couldn't find group: \@$k\n"} : $_ }
+       @_
+}
+# }}}
+
+# set_usage_error($&) {{{
+sub set_usage_error($&) {
+    my $this = shift;
+       $this->{_usage_error} = shift;
+
+    $this;
+}
+# }}}
 # read_config {{{
 sub read_config {
     my ($this, $that) = @_;
 
     $this->{_conf} = Config::Tiny->read($that) if -f $that;
     $this->{groups} = {
-        map { $_ => [split m/\s*,\s*/, $this->{_conf}{groups}{$_}] }
+        map { $_ => [ $this->_process_space_delimited($this->{_conf}{groups}{$_}) ] }
         keys %{ $this->{_conf}{groups} }
     };
 
-    if( my ($s) = grep {defined} @{$this->{_conf}{options}}{qw(ssh_command ssh-command sshcommand ssh)} ) {
-        $this->{_ssh_cmd} = [ grep {defined} ($s =~ m/["']([^"']*?)["']|(\S+)/g) ];
+    if( my $c = $this->{_conf}{options}{'ssh-command'} ) {
+        $this->{_ssh_cmd} = ($c eq "none" ? [] : [ $this->_process_space_delimited($c) ]);
     }
 
     $this;
@@ -40,11 +67,7 @@ sub read_config {
 sub set_hosts {
     my $this = shift;
 
-    $this->{hosts} = [
-       map { split m/\s*,\s*/ }
-       map { my $k = $_; $k =~ s/^\@// ? @{$this->{groups}{$k} or die "couldn't find group: \@$k\n"} : $_ }
-       @_
-    ];
+    $this->{hosts} = [ $this->_process_hosts(@_) ];
 
     my $l = 0;
     for( map { length $_ } @{ $this->{hosts} } ) {
@@ -55,26 +78,23 @@ sub set_hosts {
     $this;
 }
 # }}}
-# set_usage_error($&) {{{
-sub set_usage_error($&) {
-    my $this = shift;
-       $this->{_usage_error} = shift;
-
-    $this;
-}
-# }}}
 # queue_command {{{
 sub queue_command {
     my $this = shift;
     my @hosts = @{$this->{hosts}};
 
     unless( @hosts ) {
-        if( my $e = $this->{_usage_error} ) {
-            warn "Error, no hosts specified\n";
-            $e->();
+        if( my $h = $this->{_conf}{options}{'default-hosts'} ) {
+            @hosts = $this->_process_hosts( $this->_process_space_delimited($h) );
 
         } else {
-            croak "set_hosts before issuing queue_command";
+            if( my $e = $this->{_usage_error} ) {
+                warn "Error, no hosts specified\n";
+                $e->();
+
+            } else {
+                croak "set_hosts before issuing queue_command";
+            }
         }
     }
 
@@ -83,6 +103,23 @@ sub queue_command {
     }
 
     $this;
+}
+# }}}
+# run_queue {{{
+sub run_queue {
+    my $this = shift;
+
+    $this->{_session} = POE::Session->create( inline_states => {
+        _start       => sub { $this->poe_start(@_) },
+        child_stdout => sub { $this->line(1, @_) },
+        child_stderr => sub { $this->line(2, @_) },
+        child_close  => sub { $this->close(@_) },
+        child_signal => sub { $this->sigchld(@_) },
+    });
+
+    POE::Kernel->run();
+
+    $this
 }
 # }}}
 
@@ -133,8 +170,8 @@ sub close {
 }
 # }}}
 
-# start_queue {{{
-sub start_queue {
+# start_queue_on_host {{{
+sub start_queue_on_host {
     my ($this, $kernel => $host, $cmdno, $cmd, @next) = @_;
 
     my $kid = POE::Wheel::Run->new(
@@ -151,35 +188,17 @@ sub start_queue {
     $this->{_wid}{ $kid->ID } = $this->{_pid}{ $kid->PID } = $info;
 }
 # }}}
-
-# _poe_start {{{
-sub _poe_start {
+# poe_start {{{
+sub poe_start {
     my $this = shift;
 
     for my $host (keys %{ $this->{_cmd_queue} }) {
         my @c = @{ $this->{_cmd_queue}{$host} };
 
-        $this->start_queue($_[KERNEL] => $host, 1, @c);
+        $this->start_queue_on_host($_[KERNEL] => $host, 1, @c);
     }
 
     delete $this->{_cmd_queue};
     return;
-}
-# }}}
-# run_queue {{{
-sub run_queue {
-    my $this = shift;
-
-    $this->{_session} = POE::Session->create( inline_states => {
-        _start       => sub { $this->_poe_start(@_) },
-        child_stdout => sub { $this->line(1, @_) },
-        child_stderr => sub { $this->line(2, @_) },
-        child_close  => sub { $this->close(@_) },
-        child_signal => sub { $this->sigchld(@_) },
-    });
-
-    POE::Kernel->run();
-
-    $this
 }
 # }}}
