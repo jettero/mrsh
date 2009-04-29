@@ -3,6 +3,7 @@ package App::MrShell;
 use strict;
 use warnings;
 
+use Carp;
 use POSIX;
 use Config::Tiny;
 use POE qw( Wheel::Run );
@@ -54,11 +55,32 @@ sub set_hosts {
     $this;
 }
 # }}}
-# run_command {{{
-sub run_command {
+# set_usage_error($&) {{{
+sub set_usage_error($&) {
     my $this = shift;
+       $this->{_usage_error} = shift;
 
-    push @{$this->{cmd}}, \@_;
+    $this;
+}
+# }}}
+# queue_command {{{
+sub queue_command {
+    my $this = shift;
+    my @hosts = @{$this->{hosts}};
+
+    unless( @hosts ) {
+        if( my $e = $this->{_usage_error} ) {
+            warn "no hosts specified\n";
+            $e->();
+
+        } else {
+            croak "set_hosts before issuing queue_command";
+        }
+    }
+
+    for my $h (@hosts) {
+        push @{$this->{_cmd_queue}{$h}}, \@_;
+    }
 
     $this;
 }
@@ -111,8 +133,8 @@ sub close {
 }
 # }}}
 
-# start_one {{{
-sub start_one {
+# start_queue {{{
+sub start_queue {
     my ($this, $kernel => $host, $cmdno, $cmd, @next) = @_;
 
     my $kid = POE::Wheel::Run->new(
@@ -134,16 +156,18 @@ sub start_one {
 sub _poe_start {
     my $this = shift;
 
-    my @c = @{ delete $this->{cmd} || [] };
-    if( @c ) {
-        for my $host (@{ $this->{hosts} }) {
-            $this->start_one($_[KERNEL] => $host, 1, @c);
-        }
+    for my $host (keys %{ $this->{_cmd_queue} }) {
+        my @c = @{ $this->{_cmd_queue}{$host} };
+
+        $this->start_queue($_[KERNEL] => $host, 1, @c);
     }
+
+    delete $this->{_cmd_queue};
+    return;
 }
 # }}}
-# run_poe {{{
-sub run_poe {
+# run_queue {{{
+sub run_queue {
     my $this = shift;
 
     $this->{_session} = POE::Session->create( inline_states => {

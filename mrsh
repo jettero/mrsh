@@ -10,16 +10,16 @@ use App::MrShell;
 my @hosts;
 Getopt::Long::Configure("bundling"); # make switches case sensitive (and turn on bundling)
 GetOptions("--host|H=s@"=>\@hosts, "--help|h"=>sub { pod2usage(-verbose=>1) });
-pod2usage @ARGV;
+pod2usage unless @ARGV;
 
 App::MrShell
 
     -> new
-    -> usage_error(sub {pod2usage(-verbose=>2)})
+    -> set_usage_error(sub {pod2usage(-verbose=>2)})
     -> read_config("$ENV{HOME}/.mrshrc")
-    -> set_hosts(@hosts)  # tell Mr. Shell where to run things
-    -> run_command(@ARGV) # queue a command
-    -> run_poe;           # tell POE to do what POE does
+    -> set_hosts(@hosts)    # tell Mr. Shell where to run things
+    -> queue_command(@ARGV) # queue a command for whatever hosts are set
+    -> run_queue;           # tell POE to do what POE does
 
 __END__
 
@@ -55,6 +55,6 @@ Released as GPL, like the original Mr. Shell circa 1997.
 
 =head1 SEE ALSO
 
-perl(1), L<IO::Select>
+ssh(1), perl(1), L<POE>, L<POE::Wheel::Run>
 
 =cut
