@@ -70,7 +70,7 @@ sub queue_command {
 
     unless( @hosts ) {
         if( my $e = $this->{_usage_error} ) {
-            warn "no hosts specified\n";
+            warn "Error, no hosts specified\n";
             $e->();
 
         } else {
