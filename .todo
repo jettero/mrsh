@@ -2,13 +2,19 @@
     <note priority="high" time="1240931521" done="1240940272">
         run_command should queue commands that can be run consequtively on each host
     </note>
-    <note priority="medium" time="1240858768">
+    <note priority="medium" time="1240858768" done="1241002750">
         there should be a non-shell mode
     </note>
     <note priority="medium" time="1240858777">
         there should be a readline shell
     </note>
-    <note priority="medium" time="1240858796">
-        there should be a single line result mode and a multiline mode, ... both of which work concurrently
+    <note priority="medium" time="1241002800">
+        options
+        <note priority="medium" time="1241002814">
+            all opts specifiable via .ini should also work from cmdline
+        </note>
+        <note priority="medium" time="1241002825">
+            need opt to specifiy config location
+        </note>
     </note>
 </todo>
