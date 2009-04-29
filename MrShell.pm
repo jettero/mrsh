@@ -10,11 +10,11 @@ use POE qw( Wheel::Run );
 use Term::ANSIColor qw(:constants);
 
 our $VERSION = '2.0000';
-our @SSH_COMMAND = (qw(ssh -qx -o), 'BatchMode yes', '-o', 'StrictHostKeyChecking no');
+our @DEFAULT_SHELL_COMMAND = (qw(ssh -qx -o), 'BatchMode yes', '-o', 'StrictHostKeyChecking no');
 
 # new {{{
 sub new {
-    my $this = bless { hosts=>[], cmd=>[], _ssh_cmd=>[@SSH_COMMAND] };
+    my $this = bless { hosts=>[], cmd=>[], _shell_cmd=>[@DEFAULT_SHELL_COMMAND] };
 
     $this;
 }
@@ -56,8 +56,8 @@ sub read_config {
         keys %{ $this->{_conf}{groups} }
     };
 
-    if( my $c = $this->{_conf}{options}{'ssh-command'} ) {
-        $this->{_ssh_cmd} = ($c eq "none" ? [] : [ $this->_process_space_delimited($c) ]);
+    if( my $c = $this->{_conf}{options}{'shell-command'} ) {
+        $this->{_shell_cmd} = ($c eq "none" ? [] : [ $this->_process_space_delimited($c) ]);
     }
 
     $this;
@@ -175,7 +175,7 @@ sub start_queue_on_host {
     my ($this, $kernel => $host, $cmdno, $cmd, @next) = @_;
 
     my $kid = POE::Wheel::Run->new(
-        Program     => [ @{$this->{_ssh_cmd}} => ($host, @$cmd) ],
+        Program     => [ @{$this->{_shell_cmd}} => ($host, @$cmd) ],
         StdoutEvent => "child_stdout",
         StderrEvent => "child_stderr",
         CloseEvent  => "child_close",
