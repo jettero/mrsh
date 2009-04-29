@@ -73,9 +73,8 @@ sub std_msg {
     my $msg   = shift;
 
     print strftime('%H:%M:%S ', localtime),
-        sprintf('%2d %-*s', $cmdno, $this->{_host_width}+5, "$host($fh): "),
-            ($fh==2 ? RED : $fh==0 ? (BOLD, BLACK) : () ),
-                $msg, RESET, "\n";
+        sprintf('cn:%-2d %-*s', $cmdno, $this->{_host_width}+2, "$host: "),
+            ( $fh==2 ? ('[',RED,'ERR',RESET,'] ') : () ), $msg, "\n";
 }
 # }}}
 
@@ -84,8 +83,9 @@ sub line {
     my $this = shift;
     my $fh   = shift;
     my ($line, $wid) = @_[ ARG0, ARG1 ];
-    my ($kid, $host, $cmdno) = @{$this->{_wid}{$wid}};
+    my ($kid, $host, $cmdno, $lineno) = @{$this->{_wid}{$wid}};
 
+    $$lineno ++;
     $this->std_msg($host, $cmdno, $fh, $line);
 }
 # }}}
@@ -103,10 +103,10 @@ sub sigchld {
 sub close {
     my $this = shift;
     my $wid  = $_[ARG0];
-    my ($kid, $host, $cmdno, @c) = @{ delete $this->{_wid}{$wid} };
+    my ($kid, $host, $cmdno, $lineno, @c) = @{ delete $this->{_wid}{$wid} };
     delete $this->{_pid}{ $kid->PID };
 
-  # $this->std_msg($host, $cmdno, 0, '--eof--');
+    $this->std_msg($host, $cmdno, 0, BOLD.BLACK.'--eof--'.RESET) if $$lineno == 0;
     $this->start_one($_[KERNEL] => $host, $cmdno+1, @c) if @c;
 }
 # }}}
@@ -124,7 +124,8 @@ sub start_one {
 
     $kernel->sig_child( $kid->PID, "child_signal" );
 
-    my $info = [ $kid, $host, $cmdno, @next ];
+    my $lineno = 0;
+    my $info = [ $kid, $host, $cmdno, \$lineno, @next ];
     $this->{_wid}{ $kid->ID } = $this->{_pid}{ $kid->PID } = $info;
 }
 # }}}
