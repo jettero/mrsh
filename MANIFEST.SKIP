@@ -1,0 +1,5 @@
+^\.git
+^App$
+^MANIFEST\.SKIP$
+^\.pm-desc.html$
+^\.st$
