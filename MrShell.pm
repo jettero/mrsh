@@ -10,7 +10,7 @@ use POE qw( Wheel::Run );
 use Term::ANSIColor qw(:constants);
 
 our $VERSION = '2.0000';
-our @DEFAULT_SHELL_COMMAND = (ssh => '-o', 'BatchMode yes', '-o', 'StrictHostKeyChecking no', '-o', 'ConnectTimeout 20');
+our @DEFAULT_SHELL_COMMAND = (ssh => '-o', 'BatchMode yes', '-o', 'StrictHostKeyChecking no', '-o', 'ConnectTimeout 20', '%h');
 
 # new {{{
 sub new {
@@ -261,12 +261,23 @@ sub _close {
 }
 # }}}
 
+# subst_cmd_vars {{{
+sub subst_cmd_vars {
+    my $this = shift;
+    my %h = %{ delete($this->{_subst}) || {} };
+    map {exists $h{$_} ? $h{$_} : $_} @_;
+}
+# }}}
 # start_queue_on_host {{{
 sub start_queue_on_host {
     my ($this, $kernel => $host, $cmdno, $cmd, @next) = @_;
 
+    # NOTE: used (and deleted) by subst_cmd_vars
+    $this->{_subst}{'%h'} = $host;
+    $this->{_subst}{'%n'} = $cmdno;
+
     my $kid = POE::Wheel::Run->new(
-        Program     => [ @{$this->{_shell_cmd}} => ($host, @$cmd) ],
+        Program     => [ $this->subst_cmd_vars(@{$this->{_shell_cmd}} => @$cmd) ],
         StdoutEvent => "child_stdout",
         StderrEvent => "child_stderr",
         CloseEvent  => "child_close",

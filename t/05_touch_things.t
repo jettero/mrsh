@@ -20,5 +20,5 @@ if( not $t or not -x $t ) {
 
 @App::MrShell::DEFAULT_SHELL_COMMAND = $t;
 
-ok( eval { App::MrShell->new->queue_command("test_file")->run_queue; 1 } ) or warn $@;
+ok( eval { App::MrShell->new->set_hosts("n/a")->queue_command("test_file")->run_queue; 1 } ) or warn $@;
 ok( -f "test_file" );
