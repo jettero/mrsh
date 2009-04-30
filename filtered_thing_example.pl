@@ -20,11 +20,15 @@ sub _filtered_thingy {
                 s/s/S/g for @them;
                 print "garh: ", @them;
             }
+
+            sub go {
+                my $pfft = gensym();
+                tie *{$pfft}, __PACKAGE__ or die $!;
+                $pfft;
+            }
         1} or die $@;
     }
 
-    my $pfft = myfh::gensym();
-    tie *{$pfft}, 'myfh' or die $!;
-    $pfft;
+    myfh::go();
 }
 
