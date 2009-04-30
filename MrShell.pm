@@ -10,7 +10,7 @@ use POE qw( Wheel::Run );
 use Term::ANSIColor qw(:constants);
 
 our $VERSION = '2.0000';
-our @DEFAULT_SHELL_COMMAND = (qw(ssh -qx -o), 'BatchMode yes', '-o', 'StrictHostKeyChecking no');
+our @DEFAULT_SHELL_COMMAND = (qw(ssh -qx -o), 'BatchMode yes', '-o', 'StrictHostKeyChecking no', '-o', 'ConnectTimeout 20');
 
 # new {{{
 sub new {
