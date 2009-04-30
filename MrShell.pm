@@ -10,7 +10,7 @@ use POE qw( Wheel::Run );
 use Term::ANSIColor qw(:constants);
 
 our $VERSION = '2.0000';
-our @DEFAULT_SHELL_COMMAND = (qw(ssh -qx -o), 'BatchMode yes', '-o', 'StrictHostKeyChecking no', '-o', 'ConnectTimeout 20');
+our @DEFAULT_SHELL_COMMAND = (ssh => '-o', 'BatchMode yes', '-o', 'StrictHostKeyChecking no', '-o', 'ConnectTimeout 20');
 
 # new {{{
 sub new {
@@ -131,7 +131,7 @@ sub std_msg {
 
     print strftime('%H:%M:%S ', localtime),
         sprintf('cn:%-2d %-*s', $cmdno, $this->{_host_width}+2, "$host: "),
-            ( $fh==2 ? ('[',RED,'ERR',RESET,'] ') : () ), $msg, "\n";
+            ( $fh==2 ? ('[',BOLD,YELLOW,'stderr',RESET,'] ') : () ), $msg, "\n";
 }
 # }}}
 
