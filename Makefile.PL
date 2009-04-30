@@ -32,7 +32,9 @@ WriteMakefile(
     clean => { FILES => 'FILES dist test_file' },
 );  
 
-my $test_ssh = prompt("Run shell tests (runs uptime and touches files in /tmp)?", "n");
+my $test_ssh;
+if( $ENV{HOSTNAME} eq "corky" and -f ".st" ) { $test_ssh = 'y'; }
+else { $test_ssh = prompt("Run shell tests (runs uptime and touches files in /tmp)?", "n") }
 
 unless( $test_ssh =~ m/n/i ) {
     my @uptime = ( "/bin/uptime", "/usr/bin/uptime", "/sbin/uptime", "/usr/sbin/uptime" );
