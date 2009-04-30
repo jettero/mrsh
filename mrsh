@@ -15,7 +15,7 @@ pod2usage() unless @ARGV;
 App::MrShell
 
     -> new
-    -> set_usage_error(sub {pod2usage(-verbose=>2)})
+    -> set_usage_error("pod2usage", -verbose=>2)
     -> read_config("$ENV{HOME}/.mrshrc")
     -> set_hosts(@hosts)    # tell Mr. Shell where to run things
     -> queue_command(@ARGV) # queue a command for whatever hosts are set

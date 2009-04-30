@@ -64,8 +64,12 @@ sub _process_group_option {
 # set_usage_error($&) {{{
 sub set_usage_error($&) {
     my $this = shift;
-       $this->{_usage_error} = shift;
+    my $func = shift;
+    my $pack = caller;
+    my $name = $pack . "::$func";
+    my @args = @_;
 
+    $this->{_usage_error} = sub { no strict 'refs'; $name->(@args) };
     $this;
 }
 # }}}
