@@ -35,4 +35,10 @@
             #PerlJam on freenode for the =~m/S+/ idea, rather than Text::Balanced
         </note>
     </note>
+    <note priority="medium" time="1241056121">
+        add quiet option
+    </note>
+    <note priority="medium" time="1241056140">
+        add custom color options and hilights
+    </note>
 </todo>
