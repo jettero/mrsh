@@ -17,4 +17,7 @@
             need opt to specifiy config location
         </note>
     </note>
+    <note priority="medium" time="1241007092">
+        need some kind of ssh routing mode... wisp+corky so commands get to wisp through corky...
+    </note>
 </todo>
