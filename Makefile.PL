@@ -31,28 +31,3 @@ WriteMakefile(
 
     clean => { FILES => 'FILES dist test_file' },
 );  
-
-my $test_ssh;
-if( $ENV{HOSTNAME} eq "corky" and -f ".st" ) { $test_ssh = 'y'; }
-else { $test_ssh = prompt("Run shell tests (runs uptime and touches files in /tmp)?", "n") }
-
-unless( $test_ssh =~ m/n/i ) {
-    my @uptime = ( "/bin/uptime", "/usr/bin/uptime", "/sbin/uptime", "/usr/sbin/uptime" );
-    my @touch  = ( "/bin/touch", "/usr/bin/touch", "/sbin/touch", "/usr/sbin/touch" );
-
-    my $uptime = shift @uptime;
-       $uptime = shift @uptime while @uptime and not -x $uptime;
-
-    my $touch = shift @touch;
-       $touch = shift @touch while @touch and not -x $touch;
-
-    if( -x $touch and -x $uptime ) {
-        open FILES, ">FILES" or die $!;
-        print FILES "$uptime\n$touch\n";
-        close FILES;
-
-    } else {
-        warn "could not find uptime and touch, skipping tests despite your wishes\n";
-    }
-
-}

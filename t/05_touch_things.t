@@ -4,21 +4,20 @@ use warnings;
 use Test;
 use App::MrShell;
 
-plan tests => 2;
+plan tests => 5;
 
-my ($t) = eval {
-    open IN, "FILES" or die $!;
-    my @files = <IN>; chomp @files;
-    grep {m/touch/} @files;
-};
+my $res = eval {
+    my $shell = App::MrShell->new
+        -> set_shell_command_option(0, $^X, "-e", '$"="."; open TOUCH, ">test_file.@ARGV"', '%h', '%n')
+        -> set_hosts("a", "b")
+        -> queue_command("c1")
+        -> queue_command("c2")
+        -> run_queue;
+7};
 
-if( not $t or not -x $t ) {
-    warn "skipping touch tests";
-    skip(1,1,1) for 1 .. 2;
-    exit 0;
-}
+ok( $res, 7 ) or warn $@;
 
-@App::MrShell::DEFAULT_SHELL_COMMAND = $t;
-
-ok( eval { App::MrShell->new->set_hosts("n/a")->queue_command("test_file")->run_queue; 1 } ) or warn $@;
-ok( -f "test_file" );
+ok( -f "test_file.a.1.c1" );
+ok( -f "test_file.a.2.c2" );
+ok( -f "test_file.b.1.c1" );
+ok( -f "test_file.b.2.c2" );

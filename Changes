@@ -1,4 +1,10 @@
-2.0: Wed Apr 29 21:33:06 EDT 2009
+2.0000: Wed Apr 29 21:54:02 EDT 2009
+   - added all kinds of bells and whistles (ok, bugfixes)
+   - made the t/05 meaningful
+   - convinced MrShell to allow commands with various subst vars
+   - made the t/05 test *portable*, rather than using external linux commands
+
+2.0000: Wed Apr 29 21:33:06 EDT 2009
    - This is practically a finished product.
    - It works on multiple hosts.
    - There are tests.
