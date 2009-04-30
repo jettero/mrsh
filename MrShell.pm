@@ -31,10 +31,15 @@ sub _process_space_delimited {
 # _process_hosts {{{
 sub _process_hosts {
     my $this = shift;
+    my @h = map { my $k = $_; $k =~ s/^\@// ? @{$this->{groups}{$k} or die "couldn't find group: \@$k\n"} : $_ } @_;
 
-    return
-       map { my $k = $_; $k =~ s/^\@// ? @{$this->{groups}{$k} or die "couldn't find group: \@$k\n"} : $_ }
-       @_
+    my $o = my $l = $this->{_host_width} || 0;
+    for( map { length $_ } @h ) {
+        $l = $_ if $_>$l
+    }
+    $this->{_host_width} = $l if $l != $o;
+
+    @h;
 }
 # }}}
 
@@ -68,13 +73,6 @@ sub set_hosts {
     my $this = shift;
 
     $this->{hosts} = [ $this->_process_hosts(@_) ];
-
-    my $l = 0;
-    for( map { length $_ } @{ $this->{hosts} } ) {
-        $l = $_ if $_>$l
-    }
-
-    $this->{_host_width} = $l;
     $this;
 }
 # }}}
