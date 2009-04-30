@@ -46,7 +46,14 @@ sub _process_hosts {
 # set_shell_command_option {{{
 sub set_shell_command_option {
     my $this = shift;
-       $this->{_shell_cmd} = ($_[0] eq "none" ? [] : [ $this->_process_space_delimited($_[0]) ]);
+    my $space_delimited = shift;
+
+    if( $space_delimited ) {
+        $this->{_shell_cmd} = ($_[0] eq "none" ? [] : [ $this->_process_space_delimited($_[0]) ]);
+
+    } else {
+        $this->{_shell_cmd} = [ @_ ];
+    }
 
     $this;
 }
@@ -128,7 +135,7 @@ sub read_config {
     }
 
     if( my $c = $this->{_conf}{options}{'shell-command'} ) {
-        $this->set_shell_command_option( $c );
+        $this->set_shell_command_option( 1, $c );
     }
 
     $this;

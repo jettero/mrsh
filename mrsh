@@ -28,9 +28,9 @@ GetOptions(
 
 my $mrsh = App::MrShell->new->set_usage_error("pod2usage");
 
-   $mrsh->read_config($conf)               if $conf;
-   $mrsh->set_logfile_option($log, $trunc) if $log;
-   $mrsh->set_shell_command_option($shell)         if $shell;
+   $mrsh->read_config($conf)                  if $conf;
+   $mrsh->set_logfile_option($log, $trunc)    if $log;
+   $mrsh->set_shell_command_option(1, $shell) if $shell;
 
    $mrsh->set_hosts(@hosts)    # tell Mr. Shell where to run things
         ->queue_command(@ARGV) # queue a command for whatever hosts are set
