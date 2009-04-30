@@ -5,27 +5,33 @@ use warnings;
 use Getopt::Long;
 use Pod::Usage;
 
-use App::MrShell;
-
-my $shell = App::MrShell->new->set_usage_error("pod2usage");
 my @hosts;
-my $config_file = "$ENV{HOME}/.mrshrc";
+my $conf = "$ENV{HOME}/.mrshrc";
+my $log;
+my $shell;
 
 Getopt::Long::Configure("bundling"); # make switches case sensitive (and turn on bundling)
 GetOptions(
 
     "host|H=s@" => \@hosts,
-    "conf|c:s"  => \$config_file, # optional value
-    "shell|s=s" => sub { $shell->set_shell_option($_[1]) },
+    "conf|c:s"  => \$conf, # optional value
+    "log|l=s"   => \$log,
+    "shell|s=s" => \$shell,
     "help|h"    => sub { pod2usage(-verbose=>1) },
 
 ) or pod2usage(); pod2usage() unless @ARGV;
 
-$shell->read_config($config_file) if $config_file;
+use App::MrShell;
 
-$shell->set_hosts(@hosts)    # tell Mr. Shell where to run things
-      ->queue_command(@ARGV) # queue a command for whatever hosts are set
-      ->run_queue;           # tell POE to do what POE does
+my $mrsh = App::MrShell->new->set_usage_error("pod2usage");
+
+   $mrsh->read_config($conf)       if $conf;
+   $mrsh->set_logfile_option($log) if $log;
+   $mrsh->set_shell_option($shell) if $shell;
+
+   $mrsh->set_hosts(@hosts)    # tell Mr. Shell where to run things
+        ->queue_command(@ARGV) # queue a command for whatever hosts are set
+        ->run_queue;           # tell POE to do what POE does
 
 __END__
 
