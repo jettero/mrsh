@@ -5,6 +5,15 @@
     <note priority="medium" time="1240858768" done="1241002750">
         there should be a non-shell mode
     </note>
+    <note priority="medium" time="1241002800" done="1241052828">
+        options
+        <note priority="medium" time="1241002814" done="0">
+            all opts specifiable via .ini should also work from cmdline
+        </note>
+        <note priority="medium" time="1241002825" done="0">
+            need opt to specifiy config location
+        </note>
+    </note>
     <note priority="high" time="1241007270">
         why don't ssh errors turn up in the stderr stream?
     </note>
@@ -13,15 +22,6 @@
     </note>
     <note priority="medium" time="1240858777">
         there should be a readline shell
-    </note>
-    <note priority="medium" time="1241002800">
-        options
-        <note priority="medium" time="1241002814">
-            all opts specifiable via .ini should also work from cmdline
-        </note>
-        <note priority="medium" time="1241002825">
-            need opt to specifiy config location
-        </note>
     </note>
     <note priority="medium" time="1241007092">
         need some kind of ssh routing mode... wisp+corky so commands get to wisp through corky...
