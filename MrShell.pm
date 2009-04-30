@@ -61,6 +61,17 @@ sub set_group_option {
     $this;
 }
 # }}}
+# set_logfile_option {{{
+sub set_logfile_option {
+    my $this = shift;
+    my $file = shift;
+    my $trunc = shift;
+
+    open $this->{_log_fh}, ($trunc ? ">" : ">>"), $file or croak "couldn't open $file for write: $!";
+
+    $this;
+}
+# }}}
 
 # set_usage_error($&) {{{
 sub set_usage_error($&) {
@@ -158,9 +169,20 @@ sub std_msg {
     my $fh    = shift;
     my $msg   = shift;
 
-    print strftime('%H:%M:%S ', localtime),
-        sprintf('cn:%-2d %-*s', $cmdno, $this->{_host_width}+2, "$host: "),
-            ( $fh==2 ? ('[',BOLD,YELLOW,'stderr',RESET,'] ') : () ), $msg, "\n";
+    my $orig; {
+        print strftime('%H:%M:%S ', localtime),
+            sprintf('cn:%-2d %-*s', $cmdno, $this->{_host_width}+2, "$host: "),
+                ( $fh==2 ? ('[',BOLD,YELLOW,'stderr',RESET,'] ') : () ), $msg, "\n";
+
+        if( $this->{_log_fh} and not $orig ) {
+            $orig = select $this->{_log_fh};
+            redo;
+        }
+    }
+
+    select $orig if $orig;
+
+    $this;
 }
 # }}}
 
