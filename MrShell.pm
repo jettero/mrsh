@@ -113,6 +113,7 @@ sub run_queue {
         child_stderr => sub { $this->line(2, @_) },
         child_close  => sub { $this->close(@_) },
         child_signal => sub { $this->sigchld(@_) },
+        stall_close  => sub { $this->_close(@_) },
     });
 
     POE::Kernel->run();
@@ -157,14 +158,29 @@ sub sigchld {
 }
 # }}}
 # close {{{
+
 sub close {
     my $this = shift;
-    my $wid  = $_[ARG0];
-    my ($kid, $host, $cmdno, $lineno, @c) = @{ delete $this->{_wid}{$wid} };
-    delete $this->{_pid}{ $kid->PID };
 
-    $this->std_msg($host, $cmdno, 0, BOLD.BLACK.'--eof--'.RESET) if $$lineno == 0;
-    $this->start_one($_[KERNEL] => $host, $cmdno+1, @c) if @c;
+    $_[KERNEL]->yield( stall_close => $_[ARG0], 0 );
+}
+# }}}
+# _close {{{
+sub _close {
+    my $this = shift;
+    my ($wid, $count) = @_[ ARG0, ARG1 ];
+
+    if( $count > 3 ) {
+        my ($kid, $host, $cmdno, $lineno, @c) = @{ delete $this->{_wid}{$wid} };
+
+        $this->std_msg($host, $cmdno, 0, BOLD.BLACK.'--eof--'.RESET) if $$lineno == 0;
+        $this->start_one($_[KERNEL] => $host, $cmdno+1, @c) if @c;
+
+        delete $this->{_pid}{ $kid->PID };
+
+    } else {
+        $_[KERNEL]->yield( stall_close => $wid, $count+1 );
+    }
 }
 # }}}
 
