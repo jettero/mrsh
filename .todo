@@ -29,4 +29,10 @@
     <note priority="medium" time="1241007465">
         use POE::Wheel::Run-&gt;new( Winsize =&gt; [ 25, 80, 1024, 768 ] ) to inform a good window size to the child processes
     </note>
+    <note priority="medium" time="1241010221">
+        thanks
+        <note priority="medium" time="1241010258">
+            #PerlJam on freenode for the =~m/S+/ idea, rather than Text::Balanced
+        </note>
+    </note>
 </todo>
