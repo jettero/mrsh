@@ -251,7 +251,7 @@ sub _close {
         my ($kid, $host, $cmdno, $lineno, @c) = @{ delete $this->{_wid}{$wid} };
 
         $this->std_msg($host, $cmdno, 0, BOLD.BLACK.'--eof--'.RESET) if $$lineno == 0;
-        $this->start_one($_[KERNEL] => $host, $cmdno+1, @c) if @c;
+        $this->start_queue_on_host($_[KERNEL] => $host, $cmdno+1, @c) if @c;
 
         delete $this->{_pid}{ $kid->PID };
 
