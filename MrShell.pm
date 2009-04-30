@@ -67,8 +67,35 @@ sub set_logfile_option {
     my $file = shift;
     my $trunc = shift;
 
-    open $this->{_log_fh}, ($trunc ? ">" : ">>"), $file or croak "couldn't open $file for write: $!";
+    unless( our $already_compiled++ ) {
+        eval q {
+            package App::MrShell::ANSIFilter;
+            use Symbol;
+            use Tie::Handle;
+            use base 'Tie::StdHandle';
 
+            my %orig;
+
+            sub PRINT {
+                my $this = shift;
+                my @them = @_;
+                s/\e\[[\d;]+m//g for @them;
+                print {$orig{$this}} @them;
+            }
+
+            sub filtered_handle {
+                my $pfft = gensym();
+                my $it = tie *{$pfft}, __PACKAGE__ or die $!;
+                $orig{$it} = shift;
+                $pfft;
+            }
+
+        1} or die $@;
+    }
+
+    open my $log, ($trunc ? ">" : ">>"), $file or croak "couldn't open $file for write: $!";
+
+    $this->{_log_fh} = App::MrShell::ANSIFilter::filtered_handle($log);
     $this;
 }
 # }}}
