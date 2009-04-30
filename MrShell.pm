@@ -42,6 +42,24 @@ sub _process_hosts {
     @h;
 }
 # }}}
+# _process_shell_command_option {{{
+sub _process_shell_command_option {
+    my $this = shift;
+       $this->{_shell_cmd} = ($_[0] eq "none" ? [] : [ $this->_process_space_delimited($_[0]) ]);
+
+    $this;
+}
+# }}}
+# _process_group_option {{{
+sub _process_group_option {
+    my $this  = shift;
+    my $name  = shift;
+    my $value = shift;
+
+    $this->{groups}{$name} = [ $this->_process_space_delimited( $value ) ];
+    $this;
+}
+# }}}
 
 # set_usage_error($&) {{{
 sub set_usage_error($&) {
@@ -56,13 +74,13 @@ sub read_config {
     my ($this, $that) = @_;
 
     $this->{_conf} = Config::Tiny->read($that) if -f $that;
-    $this->{groups} = {
-        map { $_ => [ $this->_process_space_delimited($this->{_conf}{groups}{$_}) ] }
-        keys %{ $this->{_conf}{groups} }
-    };
+
+    for my $group (keys %{ $this->{_conf}{groups} }) {
+        $this->_process_group_option( $group => $this->{_conf}{groups}{$group} );
+    }
 
     if( my $c = $this->{_conf}{options}{'shell-command'} ) {
-        $this->{_shell_cmd} = ($c eq "none" ? [] : [ $this->_process_space_delimited($c) ]);
+        $this->_process_shell_command_option( $c );
     }
 
     $this;
