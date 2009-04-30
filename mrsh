@@ -5,6 +5,8 @@ use warnings;
 use Getopt::Long;
 use Pod::Usage;
 
+use App::MrShell;
+
 my @hosts;
 my $conf = "$ENV{HOME}/.mrshrc";
 my $log;
@@ -14,6 +16,7 @@ my $trunc;
 Getopt::Long::Configure("bundling"); # make switches case sensitive (and turn on bundling)
 GetOptions(
 
+    "version|v" => sub { print "This is Mr. Shell version $App::MrShell::VERSION.\n\n"; pod2usage() },
     "host|H=s@" => \@hosts,
     "conf|c:s"  => \$conf, # optional value
     "log|l=s"   => \$log,
@@ -22,8 +25,6 @@ GetOptions(
     "help|h"    => sub { pod2usage(-verbose=>1) },
 
 ) or pod2usage(); pod2usage() unless @ARGV;
-
-use App::MrShell;
 
 my $mrsh = App::MrShell->new->set_usage_error("pod2usage");
 

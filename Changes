@@ -1,3 +1,12 @@
+2.0: Wed Apr 29 21:33:06 EDT 2009
+   - This is practically a finished product.
+   - It works on multiple hosts.
+   - There are tests.
+   - There's logging.
+   - There's config files...
+   + it still lacks host+host routing and
+   + documentation
+
 2.0: Wed Apr 29 07:16:19 EDT 2009
    - got this more or less working, building some tests
 
