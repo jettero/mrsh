@@ -9,8 +9,8 @@ use App::MrShell;
 
 my @hosts;
 Getopt::Long::Configure("bundling"); # make switches case sensitive (and turn on bundling)
-GetOptions("--host|H=s@"=>\@hosts, "--help|h"=>sub { pod2usage(-verbose=>1) });
-pod2usage unless @ARGV;
+GetOptions("--host|H=s@"=>\@hosts, "--help|h"=>sub { pod2usage(-verbose=>1) }) or pod2usage();
+pod2usage() unless @ARGV;
 
 App::MrShell
 
