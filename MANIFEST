@@ -1,4 +1,5 @@
 Changes
+lib/App/MrShell.pod
 Makefile.PL
 MANIFEST
 mrsh
