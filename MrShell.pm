@@ -106,6 +106,15 @@ sub set_logfile_option {
     $this;
 }
 # }}}
+# set_debug_option {{{
+sub set_debug_option {
+    my $this = shift;
+    my $val = shift;
+
+    $this->{debug} = defined($val) ? $val : 1;
+    $this;
+}
+# }}}
 
 # set_usage_error($&) {{{
 sub set_usage_error($&) {
@@ -319,6 +328,15 @@ sub subst_cmd_vars {
 
     } else {
         $h{'%h'} =~ s/\\!/!/g;
+    }
+
+    if( $this->{debug} ) {
+        my @cmd = map {exists $h{$_} ? $h{$_} : $_} @_;
+
+        my @dt = map {"'$_'"} @cmd;
+        $this->std_msg($$hostref, $h{'%c'}, 0, "DEBUG: exec(@dt)");
+
+        return @cmd;
     }
 
     map {exists $h{$_} ? $h{$_} : $_} @_;

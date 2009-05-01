@@ -12,6 +12,7 @@ my $conf = "$ENV{HOME}/.mrshrc";
 my $log;
 my $shell;
 my $trunc;
+my $debug;
 
 Getopt::Long::Configure("bundling"); # make switches case sensitive (and turn on bundling)
 GetOptions(
@@ -21,6 +22,7 @@ GetOptions(
     "conf|c:s"  => \$conf, # optional value
     "log|l=s"   => \$log,
     "trunc|t"   => \$trunc, # whether to truncate the log file
+    'debug|d'   => \$debug,
     "shell|s=s" => \$shell,
     "help|h"    => sub { pod2usage(-verbose=>1) },
 
@@ -31,6 +33,7 @@ my $mrsh = App::MrShell->new->set_usage_error("pod2usage");
    $mrsh->read_config($conf)                  if $conf;
    $mrsh->set_logfile_option($log, $trunc)    if $log;
    $mrsh->set_shell_command_option(1, $shell) if $shell;
+   $mrsh->set_debug_option                    if $debug;
 
    $mrsh->set_hosts(@hosts)    # tell Mr. Shell where to run things
         ->queue_command(@ARGV) # queue a command for whatever hosts are set
