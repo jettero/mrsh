@@ -307,7 +307,7 @@ sub subst_cmd_vars {
         delete $h{'%h'};
         my @hostses = split '!', $$hostref;
 
-        for my $i (0 .. $#_) {
+        for(my $i=0; $i<$#_; $i++) {
             if( $_[$i] eq '%h' ) {
                 splice @_, $i, 1 => (
                     # At the point of each %h, replace the %h with:
@@ -321,6 +321,10 @@ sub subst_cmd_vars {
                     } @hostses[1 .. $#hostses] # for each of the @hostses
 
                 );
+
+                unless( $this->{no_escape_on_route} ) {
+                    s/ /\\ /g for @_[$i+1 .. $#_];  # escape all of the $i+1 args to protect from subshell
+                }
             }
         }
 
