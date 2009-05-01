@@ -44,7 +44,15 @@ mrsh - Mr. Shell runs a command on multiple hosts
 
 =head1 SYNOPSIS
 
-    mrsh --host blarg1 --host blarg2 uptime
+    mrsh [options] command
+        --version -v: print the version, help, and exit
+        --help    -h: print extended help and exit
+
+        --host    -H: specify a host or group to run commands on
+        --conf    -c: specify config file location, or skip configs
+        --log     -l: specify a logfile location
+        --trunc   -t: overwrite logfile, rather than append
+        --shell   -s: change the (remote-)shell command
 
 =head1 DESCRIPTION
 
@@ -52,7 +60,8 @@ mrsh - Mr. Shell runs a command on multiple hosts
 
 =item B<--host> B<-H>
 
-Names of hosts upon which to run commands.
+Names of hosts or groups upon which to run commands.  Groups are prefixed with
+an C<@> character and can only be specified in the L<config file|/CONFIG>.
 
 =back
 
