@@ -2,6 +2,9 @@
     <note priority="high" time="1240931521" done="1240940272">
         run_command should queue commands that can be run consequtively on each host
     </note>
+    <note priority="high" time="1241007507" done="1241118395">
+        add an ErrorEvent
+    </note>
     <note priority="medium" time="1240858768" done="1241002750">
         there should be a non-shell mode
     </note>
@@ -14,14 +17,14 @@
             need opt to specifiy config location
         </note>
     </note>
-    <note priority="high" time="1241007507" done="1241118395">
-        add an ErrorEvent
-    </note>
     <note priority="medium" time="1240858777">
         there should be a readline shell
     </note>
     <note priority="medium" time="1241007092">
         need some kind of ssh routing mode... wisp+corky so commands get to wisp through corky...
+        <note priority="medium" time="1241118862">
+            shouls support disabling the routing on bang with escape
+        </note>
     </note>
     <note priority="medium" time="1241007465">
         use POE::Wheel::Run-&gt;new( Winsize =&gt; [ 25, 80, 1024, 768 ] ) to inform a good window size to the child processes
