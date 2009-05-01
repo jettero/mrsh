@@ -29,5 +29,5 @@ WriteMakefile(
         LICENSE => 'GPL',
     ) : ()),
 
-    clean => { FILES => 'FILES dist test_file' },
+    clean => { FILES => 'FILES dist test_file.*' },
 );  
