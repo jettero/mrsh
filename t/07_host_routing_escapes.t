@@ -20,6 +20,6 @@ DIRECT: {
 INDIRECT1: {
     my $host  = "via1!nombre";
     my @type1 = $shell->set_subst_vars('%h'=>$host)->subst_cmd_vars(\$host, @cmd);
-    ok("@type1", 'a b via1 a\ b nombre c\ d via1 a b via1 a\\ b nombre c\\ d nombre e\\ f');
+    ok("@type1", 'a b via1 a\\ b nombre c\\ d via1 a\\ b via1 a\\\\ b nombre c\\\\ d nombre e\\\\ f');
     ok($host, "nombre");
 }
