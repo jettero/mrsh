@@ -280,10 +280,47 @@ sub error_event {
 }
 # }}}
 
+# set_subst_vars {{{
+sub set_subst_vars {
+    my $this = shift;
+       $this->{_subst} = { @_ };
+
+    $this;
+}
+# }}}
 # subst_cmd_vars {{{
 sub subst_cmd_vars {
     my $this = shift;
+    my $hostref = shift;
     my %h = %{ delete($this->{_subst}) || {} };
+
+    if( $$hostref =~ m/\b(?!<\\)!/ ) {
+        delete $h{'%h'};
+        my @hostses = split '!', $$hostref;
+
+        for my $i (0 .. $#_) {
+            if( $_[$i] eq '%h' ) {
+                splice @_, $i, 1 => (
+                    # At the point of each %h, replace the %h with:
+
+                    $hostses[0], # the first host in the route:
+
+                    map {
+                        (@_[0 .. $i-1], # plus all the @_ up to this point
+                            $_) # plus the next host name
+
+                    } @hostses[1 .. $#hostses] # for each of the @hostses
+
+                );
+            }
+        }
+
+        $$hostref = $hostses[-1];
+
+    } else {
+        $h{'%h'} =~ s/\\!/!/g;
+    }
+
     map {exists $h{$_} ? $h{$_} : $_} @_;
 }
 # }}}
@@ -296,7 +333,7 @@ sub start_queue_on_host {
     $this->{_subst}{'%n'} = $cmdno;
 
     my $kid = POE::Wheel::Run->new(
-        Program     => [ $this->subst_cmd_vars(@{$this->{_shell_cmd}} => @$cmd) ],
+        Program     => [ $this->subst_cmd_vars(\$host, @{$this->{_shell_cmd}} => @$cmd) ],
         StdoutEvent => "child_stdout",
         StderrEvent => "child_stderr",
         CloseEvent  => "child_close",

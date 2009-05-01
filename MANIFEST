@@ -6,3 +6,4 @@ MrShell.pm
 README
 t/01_load.t
 t/05_touch_things.t
+t/07_host_routing.t
