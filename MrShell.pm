@@ -187,6 +187,7 @@ sub run_queue {
         child_close  => sub { $this->close(@_) },
         child_signal => sub { $this->sigchld(@_) },
         stall_close  => sub { $this->_close(@_) },
+        ErrorEvent   => sub { $this->error_event },
     });
 
     POE::Kernel->run();
@@ -238,7 +239,7 @@ sub sigchld {
     my ($kid, $host, $cmdno, @c) = @{ delete $this->{_pid}{ $_[ARG1] } || return };
     delete $this->{_wid}{ $kid->ID };
 
-    $this->std_msg($host, $cmdno, 0, '--error--');
+    $this->std_msg($host, $cmdno, 0, '-- error: unexpected child exit --');
 }
 # }}}
 # close {{{
@@ -265,6 +266,17 @@ sub _close {
     } else {
         $_[KERNEL]->yield( stall_close => $wid, $count+1 );
     }
+}
+# }}}
+# error_event {{{
+sub error_event {
+    my $this = shift;
+    my ($operation, $errnum, $errstr, $wid) = @_[ARG0 .. ARG3];
+    my ($kid, $host, $cmdno, @c) = @{ delete $this->{_wid}{$wid} || return };
+    delete $this->{_pid}{ $kid->PID };
+
+    $errstr = "remote end closed" if $operation eq "read" and !$errnum;
+    $this->std_msg($host, $cmdno, 0, "-- $operation error $errnum: $errstr --");
 }
 # }}}
 
