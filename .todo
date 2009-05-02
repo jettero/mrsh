@@ -29,6 +29,9 @@
             there was no problem
         </comment>
     </note>
+    <note priority="medium" time="1241265330" done="1241297347">
+        recognize @group arguments as -H @group arguments under certain circumstances: e.g. mrsh @group uptime should work, but mrsh -H corky uptime @group should not, but what are the conditions precisely?
+    </note>
     <note priority="veryhigh" time="1241205110">
         docs
         <note priority="medium" time="1241010221">
@@ -62,11 +65,11 @@
     <note priority="medium" time="1241265181">
         add option to change host routing character
     </note>
-    <note priority="medium" time="1241265330" done="1241297347">
-        recognize @group arguments as -H @group arguments under certain circumstances: e.g. mrsh @group uptime should work, but mrsh -H corky uptime @group should not, but what are the conditions precisely?
-    </note>
     <note priority="medium" time="1241265434">
         make mrsh look in your Documents and Settings ... area... for mrshrc on windows
+    </note>
+    <note priority="medium" time="1241298683">
+        consider using Conduit and IO::Pty might be handy for some things (debconf?)
     </note>
     <note priority="low" time="1241277277">
         consider a command separator to break up @ARGV before sending to queue_command(), silly really, since mrsh 'ls | grep' and 'touch file; cat file' work fine.
