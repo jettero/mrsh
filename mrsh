@@ -59,6 +59,7 @@ mrsh - Mr. Shell runs a command on multiple hosts
         --log     -l: specify a logfile location
         --trunc   -t: overwrite logfile, rather than append
         --shell   -s: change the (remote-)shell command
+        --noesc   -N: do not escape the sub commands during host-routing mode
 
 =head1 DESCRIPTION
 
@@ -67,9 +68,109 @@ mrsh - Mr. Shell runs a command on multiple hosts
 =item B<--host> B<-H>
 
 Names of hosts or groups upon which to run commands.  Groups are prefixed with
-an C<@> character and can only be specified in the L<config file|/CONFIG>.
+an C<@> character and can only be specified in the configuration file (see
+L<CONFIG FILE>).
+
+=item B<--conf> B<-c>
+
+By default, L<mrsh> will look for C<.mrshrc> the user's home directory.  Users
+may change the location with this switch.  The switch takes an optoinal
+argument, the location.  When a location is not specified, it disables the
+loading of any config files.
+
+=item B<--log> B<-l> B<--trunc> B<-t>
+
+L<mrsh> doesn't keep any logs by default.  Users may specify a logfile location
+to start logging.  Logs will be appended (even between runs) unless the truncate
+option is specified -- in which case, the logfile will simply be overwritten
+instead.
+
+=item B<--shell> B<-s>
+
+By default, L<mrsh> uses the following command as the shell command.
+
+    ssh -o BatchMode yes -o StrictHostKeyChecking no -o ConnectTimeout 20 %h
+
+The C<%h> will be replaced by the hostname(s) during execution
+(see L<COMMAND ESCAPES>).
+
+Almost any shell command will work, see C<t/05_touch_things.t> in the
+distribution for using perl as a "shell" to touch files.  Arguments to B<-s> are
+space delimited but understand very simple quoting:
+
+=item B<--noesc> B<-N>
+
+During host routing mode, L<mrsh> will escape spaces and backslashes in a way
+that L<openssh|http://openssh.com/> will understand correctly.  That behavior
+can be completely disabled with this option.
 
 =back
+
+=head1 COMMAND ESCAPES
+
+These things will be replaced before forking the commands on the remote hosts.
+There aren't many of these yet, but there will likely be more in the future.
+
+=over
+
+=item B<%c>
+
+The command number.
+
+=item B<%h>
+
+The hostname.  The hostname escape supports a special host routing protocol.
+Hostnames that contain the routing character will be expanded to magically
+create sub-commands as needed to connect I<through> hosts while executing
+commands.
+
+When expanding a host route, all C<%h> will be replaced with the elements of
+the command array up to that escape, plus the hostname, for each host in the
+hosts route.
+
+This expansion also optionally (see B<-N> above) expands spaces and slashes to
+escaped values compatible with L<openssh|http://openssh.com/>.
+
+This is perhaps more clear by example.
+
+Let's say this is the command in question.
+
+    ssh -o 'BatchMode Yes' %h 'ls -ald /tmp/'
+
+And let's say our hostname is C<corky!wisp>, then the command becomes:
+
+    ssh -o 'BatchMode Yes' corky ssh -o 'Batchmode\ Yes' wisp 'ls\\ -ald\\ /tmp'
+
+=back
+
+=head1 CONFIG FILE
+
+The config file is loaded using the L<Config::Tiny> module, which supports
+basic "standard" C<.ini> files.  L<mrsh> reads two sections for values and
+ignores all values it doesn't understand.
+
+=head2 B<[options]>
+
+=over
+
+=back
+
+=head2 B<[groups]>
+
+The B<[groups]> section can contain as many hostname values as ... your platform
+as memory.  Groups are expanded by pre-fixing with an '@' character when passing
+hostnames to B<-H> or via the C<default-hosts> option above.
+
+Hosts and host routes are space separated.
+
+=head2 EXAMPLE CONFIG
+
+    [options]
+        default-hosts = @debian-desktops
+        shell-command = ssh -o 'BatchMode Yes'
+
+    [groups]
+        debian-desktops = wisp corky razor
 
 =head1 AUTHOR
 
