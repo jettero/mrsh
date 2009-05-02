@@ -164,6 +164,21 @@ sub read_config {
         $this->set_shell_command_option( 1, $c );
     }
 
+    if( my $c = $this->{_conf}{options}{'logfile'} ) {
+        my $t = $this->{_conf}{options}{'truncate-logfile'};
+        my $v = 1 if $t;
+           $v = 0 if $c =~ m/(?:no|false)/i;
+
+        $this->set_logfile_option($c, $t);
+    }
+
+    if( my $c = $this->{_conf}{options}{'no-command-escapes'} ) {
+        my $v = 1 if $c;
+           $v = 0 if $c =~ m/(?:no|false)/i;
+
+        $this->set_no_command_escapes_option( $v );
+    }
+
     $this;
 }
 # }}}
