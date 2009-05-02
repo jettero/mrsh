@@ -17,6 +17,12 @@
             need opt to specifiy config location
         </note>
     </note>
+    <note priority="medium" time="1241007092" done="1241264299">
+        need some kind of ssh routing mode... wisp+corky so commands get to wisp through corky...
+        <note priority="medium" time="1241118862" done="0">
+            shouls support disabling the routing on bang with escape
+        </note>
+    </note>
     <note priority="medium" time="1241223849" done="1241224838">
         solve the 'ssh -o "BatchMode yes"' problem
         <comment>
@@ -25,6 +31,12 @@
     </note>
     <note priority="veryhigh" time="1241205110">
         docs
+        <note priority="medium" time="1241010221">
+            thanks
+            <note priority="medium" time="1241010258">
+                #PerlJam on freenode for the =~m/S+/ idea, rather than Text::Balanced
+            </note>
+        </note>
     </note>
     <note priority="high" time="1241193821">
         some way to propagate commands to remote machines and systemx or exec {cmd} cmd =&gt; @args them there
@@ -35,25 +47,16 @@
     <note priority="medium" time="1240858777">
         there should be a readline shell
     </note>
-    <note priority="medium" time="1241007092" done="1241264299">
-        need some kind of ssh routing mode... wisp+corky so commands get to wisp through corky...
-        <note priority="medium" time="1241118862" done="0">
-            shouls support disabling the routing on bang with escape
-        </note>
-    </note>
     <note priority="medium" time="1241007465">
         use POE::Wheel::Run-&gt;new( Winsize =&gt; [ 25, 80, 1024, 768 ] ) to inform a good window size to the child processes
-    </note>
-    <note priority="medium" time="1241010221">
-        thanks
-        <note priority="medium" time="1241010258">
-            #PerlJam on freenode for the =~m/S+/ idea, rather than Text::Balanced
-        </note>
     </note>
     <note priority="medium" time="1241056121">
         add quiet option
     </note>
     <note priority="medium" time="1241056140">
         add custom color options and hilights
+    </note>
+    <note priority="medium" time="1241265181">
+        add option to change host routing character
     </note>
 </todo>
