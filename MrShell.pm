@@ -345,7 +345,7 @@ sub error_event {
 # set_subst_vars {{{
 sub set_subst_vars {
     my $this = shift;
-       $this->{_subst} = { @_ };
+       $this->{_subst} = { @_ }; # this may be rigorously checked later, but for now just stuff it
 
     $this;
 }
@@ -398,8 +398,10 @@ sub start_queue_on_host {
     my ($this, $kernel => $host, $cmdno, $cmd, @next) = @_;
 
     # NOTE: used (and deleted) by subst_cmd_vars
-    $this->{_subst}{'%h'} = $host;
-    $this->{_subst}{'%n'} = $cmdno;
+    $this->set_subst_vars(
+        '%h' => $host,
+        '%n' => $cmdno,
+    );
 
     my $kid = POE::Wheel::Run->new(
         Program     => [ $this->subst_cmd_vars(\$host, @{$this->{_shell_cmd}} => @$cmd) ],
