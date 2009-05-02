@@ -111,7 +111,16 @@ sub set_debug_option {
     my $this = shift;
     my $val = shift;
 
-    $this->{debug} = defined($val) ? $val : 1;
+    # -d 0 and -d 1 are the same
+    # -d 2 is a level up, -d 4 is even more
+    # $val==undef clears the setting
+
+    if( not defined $val ) {
+        delete $this->{debug};
+        return $this;
+    }
+
+    $this->{debug} = $val ? $val : 1;
     $this;
 }
 # }}}
