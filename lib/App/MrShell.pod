@@ -63,6 +63,32 @@ they function correctly when subshelled.  This disables that functionality.
 
 =back
 
+=head2 B<read_config>
+
+The options above can be specified from a config file, which is documented in
+the command line tool (see L<mrsh>).  The config file is read using
+L<Config::Tiny>.
+
+=head2 B<set_usage_error>
+
+=head1 COMMAND METHODS
+
+=head2 B<set_hosts>
+
+Set the hosts, groups, and routed strings for the next
+L<queue_command|/queue_command>.
+
+=head2 B<queue_command>
+
+Push a command into the stack for the given hosts (specified by
+L<set_hosts|/set_hosts>).
+
+=head2 B<set_subst_vars>
+
+=head2 B<subst_cmd_vars>
+
+=head2 B<start_queue_on_host>
+
 =head1 FAQ
 
 =head1 REPORTING BUGS
