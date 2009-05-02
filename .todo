@@ -50,7 +50,10 @@
     <note priority="medium" time="1241056140">
         add custom color options and hilights
     </note>
-    <note priority="medium" time="1241223849">
+    <note priority="medium" time="1241223849" done="1241224838">
         solve the 'ssh -o "BatchMode yes"' problem
+        <comment>
+            there was no problem
+        </comment>
     </note>
 </todo>

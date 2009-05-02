@@ -1,7 +1,9 @@
-#!/bin/bash
+#!/usr/bin/perl
 
-set -e 
-make || perl Makefile.PL && make
+use strict;
+use IPC::System::Simple qw(systemx);
 
-perl -Iblib/lib ./mrsh $*
+eval {systemx("make")} or (systemx(qw(perl Makefile.PL)) and systemx("make"));
+
+systemx($^X, '-Iblib/lib', 'mrsh', @ARGV);
 
