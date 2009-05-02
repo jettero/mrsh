@@ -322,7 +322,8 @@ sub subst_cmd_vars {
 
                 for my $h (reverse @hosts[1 .. $#hosts]) {
                     splice @_, $i+1, 0, @_[0 .. $i-1] => $h;
-                    s/ /\\ /g for @_[$i+1 .. $#_];
+                    s/\\/\\\\/g         for @_[$i+1 .. $#_];
+                    s/(?<=[^\\]) /\\ /g for @_[$i+1 .. $#_];
                 }
             }
         }
