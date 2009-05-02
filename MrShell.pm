@@ -218,7 +218,7 @@ sub queue_command {
     }
 
     for my $h (@hosts) {
-        push @{$this->{_cmd_queue}{$h}}, \@_;
+        push @{$this->{_cmd_queue}{$h}}, [@_]; # make a real copy
     }
 
     $this;
