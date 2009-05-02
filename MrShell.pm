@@ -258,7 +258,7 @@ sub std_msg {
     my $time_str = strftime('%H:%M:%S', localtime);
     my $orig; {
         print $time_str,
-            sprintf('cn:%-2d %-*s', $cmdno, $this->{_host_width}+2, $host_msg),
+            sprintf(' %4s %-*s', "[$cmdno]", $this->{_host_width}+2, $host_msg),
                 ( $fh==2 ? ('[',BOLD,YELLOW,'stderr',RESET,'] ') : () ), $msg, RESET, "\n";
 
         if( $this->{_log_fh} and not $orig ) {
