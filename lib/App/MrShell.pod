@@ -61,44 +61,57 @@ indicate an increased amount of debugging noise.
 When expanding hosts in host-routing mode, slashes and spaces are escaped so
 they function correctly when subshelled.  This disables that functionality.
 
-=back
-
-=head2 B<read_config>
+=item B<read_config>
 
 The options above can be specified from a config file, which is documented in
 the command line tool (see L<mrsh>).  The config file is read using
 L<Config::Tiny>.
 
-=head2 B<set_usage_error>
+=item B<set_usage_error>
+
+Pass in a function name to call on error.  Useful for showing
+L<pod2usage|Pod::Usage/pod2usage>() information.
+
+Example: 
+
+    my $mrsh = App::MrShell->new->set_usage_error("pod2usage");
+
+=back
 
 =head1 COMMAND METHODS
 
-=head2 B<set_hosts>
+=over
+
+=item B<set_hosts>
 
 Set the hosts, groups, and routed strings for the next
 L<queue_command>.
 
-=head2 B<queue_command>
+=item B<queue_command>
 
 Push a command into the stack for the given hosts (specified by
 L<set_hosts>).
 
-=head2 B<set_subst_vars>
+=item B<set_subst_vars>
 
 Set any built in or extra subst vars.  These will only ever be set once per
-L<subst_cmd_vars> call, so setting built-in keys will override the built-in
+L<subst_cmd_vars>() call, so setting built-in keys will override the built-in
 values.
 
-=head2 B<subst_cmd_vars>
+=item B<subst_cmd_vars>
 
 Substitute command vars, including the special magic of host routing and the
 escaping associated with it.  So far there are only the two built-in subst vars:
 C<%h> (hostname) and C<%n> (command number).
 
-Others (that is non supported substs) can be added with the subst populator (see
-L<set_subst_vars>).
+Others (that is non supported substs) can be added with L<set_subst_vars>().
 
-=head2 B<start_queue_on_host>
+=item B<run_queue>
+
+Run whatever commands are queued.  This starts a L<POE::Session> and issues a
+L<POE::Kernel>->L<run|POE::Kernel/run>().
+
+=back
 
 =head1 FAQ
 
