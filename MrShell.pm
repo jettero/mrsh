@@ -124,6 +124,14 @@ sub set_debug_option {
     $this;
 }
 # }}}
+# set_no_command_escapes_option {{{
+sub set_no_command_escapes_option {
+    my $this = shift;
+
+    $this->{no_command_escapes} = 1;
+    $this;
+}
+# }}}
 
 # set_usage_error($&) {{{
 sub set_usage_error($&) {
@@ -322,8 +330,11 @@ sub subst_cmd_vars {
 
                 for my $h (reverse @hosts[1 .. $#hosts]) {
                     splice @_, $i+1, 0, @_[0 .. $i-1] => $h;
-                    s/\\/\\\\/g         for @_[$i+1 .. $#_];
-                    s/(?<=[^\\]) /\\ /g for @_[$i+1 .. $#_];
+
+                    unless( $this->{no_command_escapes} ) {
+                        s/\\/\\\\/g         for @_[$i+1 .. $#_];
+                        s/(?<=[^\\]) /\\ /g for @_[$i+1 .. $#_];
+                    }
                 }
             }
         }
@@ -368,6 +379,7 @@ sub start_queue_on_host {
     $this->{_wid}{ $kid->ID } = $this->{_pid}{ $kid->PID } = $info;
 }
 # }}}
+
 # poe_start {{{
 sub poe_start {
     my $this = shift;

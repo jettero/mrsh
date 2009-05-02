@@ -13,6 +13,7 @@ my $log;
 my $shell;
 my $trunc;
 my $debug;
+my $no_esc;
 
 Getopt::Long::Configure("bundling"); # make switches case sensitive (and turn on bundling)
 GetOptions(
@@ -20,6 +21,7 @@ GetOptions(
     "version|v" => sub { print "This is Mr. Shell version $App::MrShell::VERSION.\n\n"; pod2usage() },
     "host|H=s@" => \@hosts,
     "conf|c:s"  => \$conf, # optional value
+    "noesc|N"   => \$no_esc,
     "log|l=s"   => \$log,
     "trunc|t"   => \$trunc, # whether to truncate the log file
     'debug|d:i' => \$debug,
@@ -34,6 +36,7 @@ my $mrsh = App::MrShell->new->set_usage_error("pod2usage");
    $mrsh->set_logfile_option($log, $trunc)    if $log;
    $mrsh->set_shell_command_option(1, $shell) if $shell;
    $mrsh->set_debug_option($debug)            if defined $debug;
+   $mrsh->set_no_command_escapes_option       if $no_esc;
 
    $mrsh->set_hosts(@hosts)    # tell Mr. Shell where to run things
         ->queue_command(@ARGV) # queue a command for whatever hosts are set

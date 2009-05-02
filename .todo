@@ -17,6 +17,12 @@
             need opt to specifiy config location
         </note>
     </note>
+    <note priority="medium" time="1241223849" done="1241224838">
+        solve the 'ssh -o "BatchMode yes"' problem
+        <comment>
+            there was no problem
+        </comment>
+    </note>
     <note priority="veryhigh" time="1241205110">
         docs
     </note>
@@ -29,9 +35,9 @@
     <note priority="medium" time="1240858777">
         there should be a readline shell
     </note>
-    <note priority="medium" time="1241007092">
+    <note priority="medium" time="1241007092" done="1241264299">
         need some kind of ssh routing mode... wisp+corky so commands get to wisp through corky...
-        <note priority="medium" time="1241118862">
+        <note priority="medium" time="1241118862" done="0">
             shouls support disabling the routing on bang with escape
         </note>
     </note>
@@ -49,11 +55,5 @@
     </note>
     <note priority="medium" time="1241056140">
         add custom color options and hilights
-    </note>
-    <note priority="medium" time="1241223849" done="1241224838">
-        solve the 'ssh -o "BatchMode yes"' problem
-        <comment>
-            there was no problem
-        </comment>
     </note>
 </todo>
