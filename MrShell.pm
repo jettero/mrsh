@@ -345,7 +345,10 @@ sub error_event {
 # set_subst_vars {{{
 sub set_subst_vars {
     my $this = shift;
-       $this->{_subst} = { @_ }; # this may be rigorously checked later, but for now just stuff it
+
+    while( my ($k,$v) = splice @_, 0, 2 ) {
+        $this->{_subst}{$k} = $v unless exists $this->{_subst}{$k};
+    }
 
     $this;
 }
