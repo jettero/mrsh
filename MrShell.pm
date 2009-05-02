@@ -148,11 +148,6 @@ sub set_usage_error($&) {
     my $name = $pack . "::$func";
     my @args = @_;
 
-    $this->{_usage_error} = sub {
-         no strict 'refs';
-         goto &$name;
-    };
-
     $this->{_usage_error} = sub { no strict 'refs'; $name->(@args) };
     $this;
 }
