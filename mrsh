@@ -34,7 +34,7 @@ my $mrsh = App::MrShell->new->set_usage_error("pod2usage");
 
    $mrsh->read_config($conf)                  if $conf;
    $mrsh->set_logfile_option($log, $trunc)    if $log;
-   $mrsh->set_shell_command_option(1, $shell) if $shell;
+   $mrsh->set_shell_command_option($shell)    if $shell;
    $mrsh->set_debug_option($debug)            if defined $debug;
    $mrsh->set_no_command_escapes_option       if $no_esc;
 

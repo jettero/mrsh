@@ -8,7 +8,7 @@ plan tests => 5;
 
 my $res = eval {
     my $shell = App::MrShell->new
-        -> set_shell_command_option(0, $^X, "-e", '$"="."; open TOUCH, ">test_file.@ARGV"', '%h', '%n')
+        -> set_shell_command_option([$^X, "-e", '$"="."; open TOUCH, ">test_file.@ARGV"', '%h', '%n'])
         -> set_hosts("a", "b")
         -> queue_command("c1")
         -> queue_command("c2")
