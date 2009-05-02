@@ -54,7 +54,7 @@ mrsh - Mr. Shell runs a command on multiple hosts
 
 =head1 SYNOPSIS
 
-    mrsh [options] command
+    mrsh [options] [--] command
         --version -v: print the version, help, and exit
         --help    -h: print extended help and exit
 
@@ -64,15 +64,30 @@ mrsh - Mr. Shell runs a command on multiple hosts
         --trunc   -t: overwrite logfile, rather than append
         --shell   -s: change the (remote-)shell command
         --noesc   -N: do not escape the sub commands during host-routing mode
+        --          : not strictly an option, but good to put before commands
 
 =head1 DESCRIPTION
 
+The B<-H> has some special magic concerning L<[groups]>.  If a group is
+specified before any other options or arguments (but possibly after other
+groups), it will automatically be expanded to have an imaginary B<-H> before
+it.  Example:
+
+    # list /tmp on all the hosts in @gr1
+    mrsh @gr1 -- ls -al /tmp
+
 =over
+
+=item B<-->
+
+Sometimes the option processor get confused by switches and options for the
+command being sent to the remote hosts.  B<--> tells the options parser to quit
+looking.
 
 =item B<--host> B<-H>
 
-Names of hosts or groups upon which to run commands.  Groups are prefixed with
-an C<@> character and can only be specified in the configuration file (see
+Names of hosts or L<[groups]> upon which to run commands.  Groups are prefixed
+with an C<@> character and can only be specified in the configuration file (see
 L<CONFIG FILE>).
 
 =item B<--conf> B<-c>
@@ -81,6 +96,9 @@ By default, L<mrsh> will look for C<.mrshrc> the user's home directory.  Users
 may change the location with this switch.  The switch takes an optoinal
 argument, the location.  When a location is not specified, it disables the
 loading of any config files.
+
+Caveat: careful that -c doesn't slurp up the next word on the command line.  It
+wants to eat your arguments.
 
 =item B<--log> B<-l> B<--trunc> B<-t>
 
@@ -160,7 +178,7 @@ ignores all values it doesn't understand.
 =item B<default-hosts>
 
 When no hosts are specified for a command, L<mrsh> will seek to use these hosts
-and groups instead.
+and L<[groups]> instead.
 
 =item B<shell-command>
 
@@ -176,7 +194,7 @@ host-routing mode.
 =head2 B<[groups]>
 
 The B<[groups]> section can contain as many hostname values as ... your platform
-as memory.  Groups are expanded by pre-fixing with an '@' character when passing
+as memory.  Groups are expanded by pre-fixing with an C<@> character when passing
 hostnames to B<-H> or via the C<default-hosts> option above.
 
 Hosts and host routes are space separated.
