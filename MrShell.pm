@@ -227,7 +227,6 @@ sub run_queue {
         _start       => sub { $this->poe_start(@_) },
         child_stdout => sub { $this->line(1, @_) },
         child_stderr => sub { $this->line(2, @_) },
-        child_close  => sub { $this->close(@_) },
         child_signal => sub { $this->sigchld(@_) },
         stall_close  => sub { $this->_close(@_) },
         ErrorEvent   => sub { $this->error_event },
@@ -282,25 +281,33 @@ sub line {
 # }}}
 
 # sigchld {{{
-sub sigchld {
+sub _sigchld_exit_error {
     my $this = shift;
-    my ($kid, $host, $cmdno, @c) = @{$this->{_pid}{ $_[ARG1] } || return };
+    my ($pid, $exit) = @_[ ARG1, ARG2 ];
+    $exit >>= 8;
 
-    # $this->std_msg($host, $cmdno, 0, RED.'-- error: unexpected child exit --');
+    $this->std_msg("?", -1, 0, BOLD.RED."-- sigchld received for untracked pid($pid, $exit), probably a bug in Mr. Shell --");
+}
+
+sub sigchld {
+    my $this = shift; # ARG0 is the signal name string
+    my ($kid, $host, $cmdno, @c) = @{ $this->{_pid}{ $_[ARG1] } || return $this->_sigchld_exit_error(@_) };
+
     # NOTE: this usually isn't an error, sometimes the sigchild will arrive
     # before the handles are "closed" in the traditional sense.  We get error
     # eveents for errors.
+    #### # $this->std_msg($host, $cmdno, 0, RED.'-- error: unexpected child exit --');
+
+    # NOTE: though, the exit value may indicate an actual error.
+    if( (my $exit = $_[ARG2]) != 0 ) {
+        # XXX: I'd like to do more here but I'm waiting to see what Paul
+        # Fenwick has to say about it.
+        $exit >>= 8;
+
+        $this->std_msg($host, $cmdno, 0, RED."-- shell exited with nonzero status exit($exit) --");
+    }
 
     $_[KERNEL]->yield( stall_close => $kid->ID, 0 );
-}
-# }}}
-# close {{{
-
-sub close {
-    my $this = shift;
-
-    # (see NOTE in _close())
-    $_[KERNEL]->yield( stall_close => $_[ARG0], 0 );
 }
 # }}}
 # _close {{{
