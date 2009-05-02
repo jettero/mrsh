@@ -252,10 +252,13 @@ sub std_msg {
     my $fh    = shift;
     my $msg   = shift;
 
+    my $host_msg = "$host: ";
+       $host_msg = "" if $host_msg eq ": ";
+
     my $orig; {
         print strftime('%H:%M:%S ', localtime),
-            sprintf('cn:%-2d %-*s', $cmdno, $this->{_host_width}+2, "$host: "),
-                ( $fh==2 ? ('[',BOLD,YELLOW,'stderr',RESET,'] ') : () ), $msg, "\n";
+            sprintf('cn:%-2d %-*s', $cmdno, $this->{_host_width}+2, $host_msg),
+                ( $fh==2 ? ('[',BOLD,YELLOW,'stderr',RESET,'] ') : () ), $msg, RESET, "\n";
 
         if( $this->{_log_fh} and not $orig ) {
             $orig = select $this->{_log_fh};
@@ -287,7 +290,7 @@ sub sigchld {
     my ($kid, $host, $cmdno, @c) = @{ delete $this->{_pid}{ $_[ARG1] } || return };
     delete $this->{_wid}{ $kid->ID };
 
-    $this->std_msg($host, $cmdno, 0, RED.'-- error: unexpected child exit --'.RESET);
+    $this->std_msg($host, $cmdno, 0, RED.'-- error: unexpected child exit --');
 }
 # }}}
 # close {{{
@@ -295,6 +298,7 @@ sub sigchld {
 sub close {
     my $this = shift;
 
+    # (see NOTE in _close())
     $_[KERNEL]->yield( stall_close => $_[ARG0], 0 );
 }
 # }}}
@@ -303,11 +307,19 @@ sub _close {
     my $this = shift;
     my ($wid, $count) = @_[ ARG0, ARG1 ];
 
+    # NOTE: I was getting erratic results with some fast running commands and
+    # guessed that I was sometimes getting the close event before the stdout
+    # event. Waiting through the kernel loop once is probably enough, but I
+    # used 3 because it does't hurt either.
+
     if( $count > 3 ) {
         my ($kid, $host, $cmdno, $lineno, @c) = @{ delete $this->{_wid}{$wid} };
 
-        $this->std_msg($host, $cmdno, 0, BOLD.BLACK.'--eof--'.RESET) if $$lineno == 0;
-        $this->start_queue_on_host($_[KERNEL] => $host, $cmdno+1, @c) if @c;
+        $this->std_msg($host, $cmdno++, 0, BOLD.BLACK.'-- eof --') if $$lineno == 0;
+        if( @c ) {
+            $this->start_queue_on_host($_[KERNEL] => $host, $cmdno, @c);
+            $this->std_msg($host, $cmdno, 0, BOLD.BLACK."-- starting: @{$c[0]} --");
+        }
 
         delete $this->{_pid}{ $kid->PID };
 
@@ -324,7 +336,7 @@ sub error_event {
     delete $this->{_pid}{ $kid->PID };
 
     $errstr = "remote end closed" if $operation eq "read" and !$errnum;
-    $this->std_msg($host, $cmdno, 0, RED."-- $operation error $errnum: $errstr --".RESET);
+    $this->std_msg($host, $cmdno, 0, RED."-- $operation error $errnum: $errstr --");
 }
 # }}}
 
@@ -371,7 +383,7 @@ sub subst_cmd_vars {
         my @cmd = map {exists $h{$_} ? $h{$_} : $_} @_;
 
         my @dt = map {"'$_'"} @cmd;
-        $this->std_msg($$hostref, $h{'%c'}, 0, BOLD.BLACK."DEBUG: exec(@dt)".RESET);
+        $this->std_msg($$hostref, $h{'%c'}, 0, BOLD.BLACK."DEBUG: exec(@dt)");
 
         return @cmd;
     }
@@ -406,10 +418,24 @@ sub start_queue_on_host {
 sub poe_start {
     my $this = shift;
 
-    for my $host (keys %{ $this->{_cmd_queue} }) {
+    my %starting;
+    my @hosts = keys %{ $this->{_cmd_queue} };
+    for my $host (@hosts) {
         my @c = @{ $this->{_cmd_queue}{$host} };
 
         $this->start_queue_on_host($_[KERNEL] => $host, 1, @c);
+        push @{$starting{"@{$c[0]}"}}, $host;
+    }
+
+    for my $message (keys %starting) {
+        my @hosts = @{ $starting{$message} };
+
+        if( @hosts == 1 ) {
+            $this->std_msg($hosts[0], 1, 0, BOLD.BLACK."-- starting: $message --");
+
+        } else {
+            $this->std_msg("", 1, 0, BOLD.BLACK."-- starting: $message on @hosts --");
+        }
     }
 
     delete $this->{_cmd_queue};
