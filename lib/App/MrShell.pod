@@ -76,16 +76,27 @@ L<Config::Tiny>.
 =head2 B<set_hosts>
 
 Set the hosts, groups, and routed strings for the next
-L<queue_command|/queue_command>.
+L<queue_command>.
 
 =head2 B<queue_command>
 
 Push a command into the stack for the given hosts (specified by
-L<set_hosts|/set_hosts>).
+L<set_hosts>).
 
 =head2 B<set_subst_vars>
 
+Set any built in or extra subst vars.  These will only ever be set once per
+L<subst_cmd_vars> call, so setting built-in keys will override the built-in
+values.
+
 =head2 B<subst_cmd_vars>
+
+Substitute command vars, including the special magic of host routing and the
+escaping associated with it.  So far there are only the two built-in subst vars:
+C<%h> (hostname) and C<%n> (command number).
+
+Others (that is non supported substs) can be added with the subst populator (see
+L<set_subst_vars>).
 
 =head2 B<start_queue_on_host>
 
