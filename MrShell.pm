@@ -257,7 +257,7 @@ sub sigchld {
     my ($kid, $host, $cmdno, @c) = @{ delete $this->{_pid}{ $_[ARG1] } || return };
     delete $this->{_wid}{ $kid->ID };
 
-    $this->std_msg($host, $cmdno, 0, '-- error: unexpected child exit --');
+    $this->std_msg($host, $cmdno, 0, RED.'-- error: unexpected child exit --'.RESET);
 }
 # }}}
 # close {{{
@@ -294,7 +294,7 @@ sub error_event {
     delete $this->{_pid}{ $kid->PID };
 
     $errstr = "remote end closed" if $operation eq "read" and !$errnum;
-    $this->std_msg($host, $cmdno, 0, "-- $operation error $errnum: $errstr --");
+    $this->std_msg($host, $cmdno, 0, RED."-- $operation error $errnum: $errstr --".RESET);
 }
 # }}}
 
@@ -314,30 +314,20 @@ sub subst_cmd_vars {
 
     if( $$hostref =~ m/\b(?!<\\)!/ ) {
         delete $h{'%h'};
-        my @hostses = split '!', $$hostref;
+        my @hosts = split '!', $$hostref;
 
         for(my $i=0; $i<@_; $i++) {
             if( $_[$i] eq '%h' ) {
-                splice @_, $i, 1 => (
-                    # At the point of each %h, replace the %h with:
+                splice @_, $i, 1, $hosts[0];
 
-                    $hostses[0], # the first host in the route:
-
-                    map {
-                        (@_[0 .. $i-1], # plus all the @_ up to this point
-                            $_) # plus the next host name
-
-                    } @hostses[1 .. $#hostses] # for each of the @hostses
-
-                );
-
-                unless( $this->{no_escape_on_route} ) {
-                    s/ /\\ /g for @_[$i+1 .. $#_];  # escape all of the $i+1 args to protect from subshell
+                for my $h (reverse @hosts[1 .. $#hosts]) {
+                    splice @_, $i+1, 0, @_[0 .. $i-1] => $h;
+                    s/ /\\ /g for @_[$i+1 .. $#_];
                 }
             }
         }
 
-        $$hostref = $hostses[-1];
+        $$hostref = $hosts[-1];
 
     } else {
         $h{'%h'} =~ s/\\!/!/g;
@@ -347,7 +337,7 @@ sub subst_cmd_vars {
         my @cmd = map {exists $h{$_} ? $h{$_} : $_} @_;
 
         my @dt = map {"'$_'"} @cmd;
-        $this->std_msg($$hostref, $h{'%c'}, 0, "DEBUG: exec(@dt)");
+        $this->std_msg($$hostref, $h{'%c'}, 0, BOLD.BLACK."DEBUG: exec(@dt)".RESET);
 
         return @cmd;
     }
