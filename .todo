@@ -68,4 +68,7 @@
     <note priority="medium" time="1241265434">
         make mrsh look in your Documents and Settings ... area... for mrshrc on windows
     </note>
+    <note priority="low" time="1241277277">
+        consider a command separator to break up @ARGV before sending to queue_command(), silly really, since mrsh 'ls | grep' and 'touch file; cat file' work fine.
+    </note>
 </todo>
