@@ -15,6 +15,10 @@ my $trunc;
 my $debug;
 my $no_esc;
 
+# turn all early group arguments without -H into -H options
+for(my $i=0; $i<@ARGV and $ARGV[$i] =~ m/^\@[\w\d]/; $i++)
+    { splice @ARGV, $i++, 0, '-H'; }
+
 Getopt::Long::Configure("bundling"); # make switches case sensitive (and turn on bundling)
 GetOptions(
 
