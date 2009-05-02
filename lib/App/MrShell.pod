@@ -5,15 +5,63 @@ App::MrShell - do everything the mrsh commandline tool can do and more
 
 =head1 SYNOPSIS
 
-my $mrsh = App::MrShell
-    -> new
-    -> set_hosts('host1', 'host2', 'host3')
-    -> queue_command('uptime')
-    -> queue_command('mii-tool', 'eth0')
-    -> queue_command('dmesg | head')
-    -> run_queue;
+    my $mrsh = App::MrShell
+        -> new
+        -> set_hosts('host1', 'host2', 'host3')
+        -> queue_command('uptime')
+        -> queue_command('mii-tool', 'eth0')
+        -> queue_command('dmesg | head')
+        -> run_queue;
 
 =head1 DESCRIPTION
+
+This package can do all the things L<mrsh> can do and possibly more.  The
+methods mostly support chaining to make script writing easier and more
+attractive.  The API hides the L<POE> nature of the project, but the author is
+not opposed to exposing it if anybody wants such a thing.
+
+=head1 OPTIONS METHODS
+
+=over
+
+=item B<set_shell_command_option>
+
+The first argument is normally a space separated list of command-and-arguments
+(with some basic quoting support).   If called with no arguments, a null-command
+will be set indicating that there isn't a shell command to prepend hostnames
+with -- the author can't imagine why this would be useful, but allows that it
+could be someday for someone.
+
+If the first argument is an arrayref, all following arguments will be ignored.
+The arrayref will be copied as the shell command.  C<[]> can be used as the
+arrayref to set a null-command.
+
+=item B<set_group_option>
+
+Setup groups of hosts.  Pairs are L<spliced|perlfunc/splice> off the stack with
+first element as the name of a group, the second element as either a space
+delimited set of hostnames or an arrayref of hostnames.  Example:
+
+    $mrsh->set_group_option( group1 => [qw(host1 host2 host3)],
+        group2=>['localhost'] );
+
+=item B<set_logfile_option>
+
+When provided, write a logfile of all lines received, where and when they were
+executed.
+
+=item B<set_debug_option>
+
+Turn on various debugging messages.  The optional argument specifies the debug
+level.  No argument, 0, and 1 are all equivalent.  While levels greater than one
+indicate an increased amount of debugging noise.
+
+=item B<set_no_command_escapes_option>
+
+When expanding hosts in host-routing mode, slashes and spaces are escaped so
+they function correctly when subshelled.  This disables that functionality.
+
+=back
 
 =head1 FAQ
 
