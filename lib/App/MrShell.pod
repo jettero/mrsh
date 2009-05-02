@@ -63,16 +63,14 @@ they function correctly when subshelled.  This disables that functionality.
 
 =item B<read_config>
 
-The options above can be specified from a config file, which is documented in
-the command line tool (see L<mrsh>).  The config file is read using
+The options above can be specified from a L<config file|mrsh/CONFIG FILE>, which
+is documented in the command line tool.  The config file is read using
 L<Config::Tiny>.
 
 =item B<set_usage_error>
 
 Pass in a function name to call on error.  Useful for showing
-L<pod2usage|Pod::Usage/pod2usage>() information.
-
-Example: 
+L<pod2usage|Pod::Usage/pod2usage>() information.  Example:
 
     my $mrsh = App::MrShell->new->set_usage_error("pod2usage");
 
@@ -89,8 +87,13 @@ L<queue_command>.
 
 =item B<queue_command>
 
-Push a command into the stack for the given hosts (specified by
-L<set_hosts>).
+Push a command into the stack for the given hosts (specified by L<set_hosts> or
+by the default hosts in the L<config file|mrsh/CONFIG FILE>).
+
+Commands are pushed as an array, although, given the nature of
+L<openssh|http://openssh.com/> it's probably ok to pass in the command as a
+single string; or even to pass in multiple commands, C<;> separated and let the
+shell sort it out.
 
 =item B<set_subst_vars>
 
@@ -113,12 +116,25 @@ L<POE::Kernel>->L<run|POE::Kernel/run>().
 
 =back
 
-=head1 FAQ
+=head1 VARS
 
-=head1 REPORTING BUGS
+=over
 
-You can report bugs either via rt.cpan.org or via the issue tracking system on
-github.  I'm likely to notice either fairly quickly.
+=item B<@DEFAULT_SHELL_COMMAND>
+
+This can be specified, perhaps better, via L<set_shell_command_option>() or via
+the L<config file|mrsh/CONFIG FILE>.
+
+=back
+
+=head1 REPORTING BUGS / REQUEST FEATURES
+
+You can report bugs either via L<rt.cpan.org|http://rt.cpan.org> or via the
+issue tracking system on L<github|http://github.com/jettero/mrsh/issues>.  I'm
+likely to notice either fairly quickly.
+
+For feature requests, just go ahead and email me.  I've never minded a
+discussion of this nature yet.
 
 =head1 AUTHOR
 
@@ -130,4 +146,4 @@ Copyright 2009 Paul Miller -- released under the GPL
 
 =head1 SEE ALSO
 
-perl(1), L<POE>, L<POE::Wheel::Run>, L<Term::ANSIColor>
+ssh(1), perl(1), L<POE>, L<POE::Wheel::Run>, L<Term::ANSIColor>
