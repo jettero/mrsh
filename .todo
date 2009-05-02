@@ -23,6 +23,9 @@
     <note priority="high" time="1241193821">
         some way to propagate commands to remote machines and systemx or exec {cmd} cmd =&gt; @args them there
     </note>
+    <note priority="high" time="1241223895">
+        if ssh exits non-zero, it's noteworthy, show it
+    </note>
     <note priority="medium" time="1240858777">
         there should be a readline shell
     </note>
@@ -46,5 +49,8 @@
     </note>
     <note priority="medium" time="1241056140">
         add custom color options and hilights
+    </note>
+    <note priority="medium" time="1241223849">
+        solve the 'ssh -o "BatchMode yes"' problem
     </note>
 </todo>
