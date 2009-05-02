@@ -284,10 +284,14 @@ sub line {
 # sigchld {{{
 sub sigchld {
     my $this = shift;
-    my ($kid, $host, $cmdno, @c) = @{ delete $this->{_pid}{ $_[ARG1] } || return };
-    delete $this->{_wid}{ $kid->ID };
+    my ($kid, $host, $cmdno, @c) = @{$this->{_pid}{ $_[ARG1] } || return };
 
-    $this->std_msg($host, $cmdno, 0, RED.'-- error: unexpected child exit --');
+    # $this->std_msg($host, $cmdno, 0, RED.'-- error: unexpected child exit --');
+    # NOTE: this usually isn't an error, sometimes the sigchild will arrive
+    # before the handles are "closed" in the traditional sense.  We get error
+    # eveents for errors.
+
+    $_[KERNEL]->yield( stall_close => $kid->ID, 0 );
 }
 # }}}
 # close {{{
@@ -303,6 +307,8 @@ sub close {
 sub _close {
     my $this = shift;
     my ($wid, $count) = @_[ ARG0, ARG1 ];
+
+    return unless $this->{_wid}{$wid}; # sometimes we'll get a sigchild *and* a close event
 
     # NOTE: I was getting erratic results with some fast running commands and
     # guessed that I was sometimes getting the close event before the stdout
