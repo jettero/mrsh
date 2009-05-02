@@ -255,12 +255,14 @@ sub std_msg {
     my $host_msg = "$host: ";
        $host_msg = "" if $host_msg eq ": ";
 
+    my $time_str = strftime('%H:%M:%S', localtime);
     my $orig; {
-        print strftime('%H:%M:%S ', localtime),
+        print $time_str,
             sprintf('cn:%-2d %-*s', $cmdno, $this->{_host_width}+2, $host_msg),
                 ( $fh==2 ? ('[',BOLD,YELLOW,'stderr',RESET,'] ') : () ), $msg, RESET, "\n";
 
         if( $this->{_log_fh} and not $orig ) {
+            $time_str = strftime('%Y-%m-%d %H:%M:%S', localtime);
             $orig = select $this->{_log_fh};
             redo;
         }
