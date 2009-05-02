@@ -46,12 +46,13 @@ sub _process_hosts {
 # set_shell_command_option {{{
 sub set_shell_command_option {
     my $this = shift;
+    my $arg = shift;
 
-    if( ref($_[0]) eq "ARRAY" ) {
-        $this->{_shell_cmd} = [ @{$_[0]} ]; # make a real copy
+    if( ref($arg) eq "ARRAY" ) {
+        $this->{_shell_cmd} = [ @$arg ]; # make a real copy
 
     } else {
-        $this->{_shell_cmd} = ($_[0] eq "none" ? [] : [ $this->_process_space_delimited($_[0]) ]);
+        $this->{_shell_cmd} = [ $this->_process_space_delimited($arg||"") ];
     }
 
     $this;
@@ -60,14 +61,15 @@ sub set_shell_command_option {
 # set_group_option {{{
 sub set_group_option {
     my $this  = shift;
-    my $name  = shift;
-    my $value = shift;
 
-    if( ref($value) eq "ARRAY" ) {
-        $this->{groups}{$name} = [ @$value ]; # make a real copy
+    my ($name, $value);
+    while( ($name, $value) = splice @_, 0, 2 and $name and $value ) {
+        if( ref($value) eq "ARRAY" ) {
+            $this->{groups}{$name} = [ @$value ]; # make a real copy
 
-    } else {
-        $this->{groups}{$name} = [ $this->_process_space_delimited( $value ) ];
+        } else {
+            $this->{groups}{$name} = [ $this->_process_space_delimited( $value ) ];
+        }
     }
 
     $this;
