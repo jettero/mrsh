@@ -153,6 +153,20 @@ ignores all values it doesn't understand.
 
 =over
 
+=item B<default-hosts>
+
+When no hosts are specified for a command, L<mrsh> will seek to use these hosts
+and groups instead.
+
+=item B<shell-command>
+
+This is the above B<-s> setting, which allows changing the shell command.
+
+=item B<no-command-escapes>
+
+This is the above B<-N> setting, which disables escaping of arguments during
+host-routing mode.
+
 =back
 
 =head2 B<[groups]>
