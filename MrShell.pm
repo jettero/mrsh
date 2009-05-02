@@ -316,7 +316,7 @@ sub subst_cmd_vars {
         delete $h{'%h'};
         my @hostses = split '!', $$hostref;
 
-        for(my $i=0; $i<$#_; $i++) {
+        for(my $i=0; $i<@_; $i++) {
             if( $_[$i] eq '%h' ) {
                 splice @_, $i, 1 => (
                     # At the point of each %h, replace the %h with:
