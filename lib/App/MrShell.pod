@@ -82,9 +82,10 @@ L<pod2usage|Pod::Usage/pod2usage>() information.  Example:
 
 =item B<set_hosts>
 
-Set the hosts, groups, and routed strings for the next L<queue_command>.
+Set the hosts, groups, and routed strings for the next L</queue_command>.
 Hosts have some special magic concerning groups.  Hosts that being with an C<@>
-character are considered groups are are expanded that way (see L</mrsh/[groups]>).
+character are considered groups are are expanded that way (see
+L<config file|mrsh/[groups]>).
 
 Host and group specifications that overlap are reduced to a unique set, so if
 C<@localhosts> contains C<host1> and C<@desktops> contains C<host1>, and for
@@ -94,7 +95,7 @@ whatever reason C<-H host1> is also specified on the command line, ...
 
 =item B<queue_command>
 
-Push a command into the stack for the given hosts (specified by L<set_hosts> or
+Push a command into the stack for the given hosts (specified by L</set_hosts> or
 by the default hosts in the L<config file|mrsh/CONFIG FILE>).
 
 Commands are pushed as an array, although, given the nature of
@@ -105,7 +106,7 @@ shell sort it out.
 =item B<set_subst_vars>
 
 Set any built in or extra subst vars.  These will only ever be set once per
-L<subst_cmd_vars>() call, so setting built-in keys will override the built-in
+L</subst_cmd_vars>() call, so setting built-in keys will override the built-in
 values.
 
 =item B<subst_cmd_vars>
@@ -114,7 +115,7 @@ Substitute command vars, including the special magic of host routing and the
 escaping associated with it.  So far there are only the two built-in subst vars:
 C<%h> (hostname) and C<%n> (command number).
 
-Others (that is non supported substs) can be added with L<set_subst_vars>().
+Others (that is non supported substs) can be added with L</set_subst_vars>().
 
 As arguments, the function takes the command, upon which substitution should
 occur, as an array.
@@ -132,7 +133,7 @@ L<POE::Kernel>->L<run|POE::Kernel/run>().
 
 =item B<@DEFAULT_SHELL_COMMAND>
 
-This can be specified, perhaps better, via L<set_shell_command_option>() or via
+This can be specified, perhaps better, via L</set_shell_command_option>() or via
 the L<config file|mrsh/CONFIG FILE>.
 
 =back
@@ -156,4 +157,4 @@ Copyright 2009 Paul Miller -- released under the GPL
 
 =head1 SEE ALSO
 
-ssh(1), perl(1), L<POE>, L<POE::Wheel::Run>, L<Term::ANSIColor>
+ssh(1), perl(1), L<mrsh>, L<POE>, L<POE::Wheel::Run>, L<Term::ANSIColor>

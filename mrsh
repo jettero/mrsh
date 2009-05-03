@@ -68,7 +68,7 @@ mrsh - Mr. Shell runs a command on multiple hosts
 
 =head1 DESCRIPTION
 
-The B<-H> has some special magic concerning L<[groups]>.  If a group is
+The B<-H> has some special magic concerning L</[groups]>.  If a group is
 specified before any other options or arguments (but possibly after other
 groups), it will automatically be expanded to have an imaginary B<-H> before
 it.  Example:
@@ -92,9 +92,9 @@ looking.
 
 =item B<--host> B<-H>
 
-Names of hosts or L<[groups]> upon which to run commands.  Groups are prefixed
+Names of hosts or L</[groups]> upon which to run commands.  Groups are prefixed
 with an C<@> character and can only be specified in the configuration file (see
-L<CONFIG FILE>).
+L</CONFIG FILE>).
 
 =item B<--conf> B<-c>
 
@@ -120,7 +120,7 @@ By default, L<mrsh> uses the following command as the shell command.
     ssh -o BatchMode yes -o StrictHostKeyChecking no -o ConnectTimeout 20 %h
 
 The C<%h> will be replaced by the hostname(s) during execution
-(see L<COMMAND ESCAPES>).
+(see L</COMMAND ESCAPES>).
 
 Almost any shell command will work, see C<t/05_touch_things.t> in the
 distribution for using perl as a "shell" to touch files.  Arguments to B<-s> are
@@ -184,7 +184,7 @@ ignores all values it doesn't understand.
 =item B<default-hosts>
 
 When no hosts are specified for a command, L<mrsh> will seek to use these hosts
-and L<[groups]> instead.
+and L</[groups]> instead.
 
 =item B<shell-command>
 
