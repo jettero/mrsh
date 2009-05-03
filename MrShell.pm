@@ -390,7 +390,7 @@ sub subst_cmd_vars {
                             $arg =~ s/\$/\\\$/g;
 
                             if( $arg =~ m/[\s()]/ ) {
-                                $arg =~ s/"/\\"/g;
+                                $arg =~ s/([\\"])/\\$1/g;
                                 $arg = "\"$arg\"";
                             }
                         }
