@@ -420,7 +420,7 @@ sub subst_cmd_vars {
         my @cmd = map {exists $h{$_} ? $h{$_} : $_} @c;
 
         my @dt = map {"<$_>"} @cmd;
-        $this->std_msg($$hostref, $h{'%c'}, 0, BOLD.BLACK."DEBUG: exec(@dt)");
+        $this->std_msg($$hostref, $h{'%n'}, 0, BOLD.BLACK."DEBUG: exec(@dt)");
 
         return @cmd;
     }
