@@ -470,7 +470,7 @@ sub poe_start {
         my @hosts = @{ $starting{$message} };
 
         if( @hosts == 1 ) {
-            $this->std_msg($hosts[0], 1, 0, BOLD.BLACK."-- starting: $message --");
+            $this->std_msg($this->_host_route_to_nick($hosts[0]), 1, 0, BOLD.BLACK."-- starting: $message --");
 
         } else {
             $this->std_msg("", 1, 0, BOLD.BLACK."-- starting: $message on @hosts --");
