@@ -253,23 +253,21 @@ sub std_msg {
     my $fh    = shift;
     my $msg   = shift;
 
-    my $host_msg = "$host: ";
-       $host_msg = "" if $host_msg eq ": ";
-
+    my $host_msg = $host ? $this->_host_route_to_nick($host) . ": " : "";
     my $time_str = strftime('%H:%M:%S', localtime);
-    my $orig; {
-        print $time_str,
-            sprintf(' %4s %-*s', "[$cmdno]", $this->{_host_width}+2, $host_msg),
-                ( $fh==2 ? ('[',BOLD,YELLOW,'stderr',RESET,'] ') : () ), $msg, RESET, "\n";
 
-        if( $this->{_log_fh} and not $orig ) {
-            $time_str = strftime('%Y-%m-%d %H:%M:%S', localtime);
-            $orig = select $this->{_log_fh};
-            redo;
-        }
+    print $time_str,
+        sprintf(' %4s %-*s', "[$cmdno]", $this->{_host_width}+2, $host_msg),
+            ( $fh==2 ? ('[',BOLD,YELLOW,'stderr',RESET,'] ') : () ), $msg, RESET, "\n";
+
+    if( $this->{_log_fh} ) {
+        $time_str = strftime('%Y-%m-%d %H:%M:%S', localtime);
+
+        # No point in printing colors, stripped anyway.  Formatting columns is
+        # equally silly -- in append mode anyway.
+        $host_msg = $host ? "$host: " : "";
+        print {$this->{_log_fh}} "$time_str [$cmdno] $host_msg", ($fh==2 ? "[stderr] " : ""), $msg, "\n";
     }
-
-    select $orig if $orig;
 
     $this;
 }
