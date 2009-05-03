@@ -109,6 +109,9 @@ C<%h> (hostname) and C<%n> (command number).
 
 Others (that is non supported substs) can be added with L<set_subst_vars>().
 
+As arguments, the function takes the command, upon which substitution should
+occur, as an array.
+
 =item B<run_queue>
 
 Run whatever commands are queued.  This starts a L<POE::Session> and issues a

@@ -375,16 +375,16 @@ sub set_subst_vars {
 # subst_cmd_vars {{{
 sub subst_cmd_vars {
     my $this = shift;
-    my $hostref = shift;
     my %h = %{ delete($this->{_subst}) || {} };
+    my $host = $h{'%h'};
 
     my @c = @_; # copy this so it doesn't get altered upstream
                 # (I'd swear I shoulnd't need to do this at all, but it's
                 #  proovably true that I do.)
 
-    if( $$hostref =~ m/\b(?!<\\)!/ ) {
+    if( $host =~ m/\b(?!<\\)!/ ) {
         delete $h{'%h'};
-        my @hosts = split '!', $$hostref;
+        my @hosts = split '!', $host;
 
         for(my $i=0; $i<@c; $i++) {
             if( $c[$i] eq '%h' ) {
@@ -410,8 +410,6 @@ sub subst_cmd_vars {
             }
         }
 
-        $$hostref = $this->_host_route_to_nick($$hostref);
-
     } else {
         $h{'%h'} =~ s/\\!/!/g;
     }
@@ -420,7 +418,7 @@ sub subst_cmd_vars {
         my @cmd = map {exists $h{$_} ? $h{$_} : $_} @c;
 
         my @dt = map {"<$_>"} @cmd;
-        $this->std_msg($$hostref, $h{'%n'}, 0, BOLD.BLACK."DEBUG: exec(@dt)");
+        $this->std_msg($host, $h{'%n'}, 0, BOLD.BLACK."DEBUG: exec(@dt)");
 
         return @cmd;
     }
@@ -439,7 +437,7 @@ sub start_queue_on_host {
     );
 
     my $kid = POE::Wheel::Run->new(
-        Program     => [ $this->subst_cmd_vars(\$host, @{$this->{_shell_cmd}} => @$cmd) ],
+        Program     => [ $this->subst_cmd_vars(@{$this->{_shell_cmd}} => @$cmd) ],
         StdoutEvent => "child_stdout",
         StderrEvent => "child_stderr",
         CloseEvent  => "child_close",
