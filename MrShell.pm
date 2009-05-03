@@ -371,19 +371,23 @@ sub subst_cmd_vars {
     my $hostref = shift;
     my %h = %{ delete($this->{_subst}) || {} };
 
+    my @c = @_; # copy this so it doesn't get altered upstream
+                # (I'd swear I shoulnd't need to do this at all, but it's
+                #  proovably true that I do.)
+
     if( $$hostref =~ m/\b(?!<\\)!/ ) {
         delete $h{'%h'};
         my @hosts = split '!', $$hostref;
 
-        for(my $i=0; $i<@_; $i++) {
-            if( $_[$i] eq '%h' ) {
-                splice @_, $i, 1, $hosts[0];
+        for(my $i=0; $i<@c; $i++) {
+            if( $c[$i] eq '%h' ) {
+                splice @c, $i, 1, $hosts[0];
 
                 for my $h (reverse @hosts[1 .. $#hosts]) {
-                    splice @_, $i+1, 0, @_[0 .. $i-1] => $h;
+                    splice @c, $i+1, 0, @c[0 .. $i-1] => $h;
 
                     unless( $this->{no_command_escapes} ) {
-                        for my $arg (@_[$i+1 .. $#_]) {
+                        for my $arg (@c[$i+1 .. $#_]) {
 
                             # NOTE: This escaping is going to be an utter pain to maintain...
 
@@ -406,7 +410,7 @@ sub subst_cmd_vars {
     }
 
     if( $this->{debug} ) {
-        my @cmd = map {exists $h{$_} ? $h{$_} : $_} @_;
+        my @cmd = map {exists $h{$_} ? $h{$_} : $_} @c;
 
         my @dt = map {"<$_>"} @cmd;
         $this->std_msg($$hostref, $h{'%c'}, 0, BOLD.BLACK."DEBUG: exec(@dt)");
@@ -414,7 +418,7 @@ sub subst_cmd_vars {
         return @cmd;
     }
 
-    map {exists $h{$_} ? $h{$_} : $_} @_;
+    map {exists $h{$_} ? $h{$_} : $_} @c;
 }
 # }}}
 # start_queue_on_host {{{
