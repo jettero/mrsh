@@ -83,6 +83,9 @@
     <note priority="medium" time="1241300182">
         learn to pack this up like ack does (standalone)
     </note>
+    <note priority="medium" time="1241377810">
+        add option to avoid uniqueing the hosts list
+    </note>
     <note priority="low" time="1241277277">
         consider a command separator to break up @ARGV before sending to queue_command(), silly really, since mrsh 'ls | grep' and 'touch file; cat file' work fine.
     </note>

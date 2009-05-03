@@ -31,7 +31,11 @@ sub _process_space_delimited {
 # _process_hosts {{{
 sub _process_hosts {
     my $this = shift;
-    my @h = map { my $k = $_; $k =~ s/^\@// ? @{$this->{groups}{$k} or die "couldn't find group: \@$k\n"} : $_ } @_;
+    my @h = do {
+        my @tmp = map { my $k = $_; $k =~ s/^\@// ? @{$this->{groups}{$k} or die "couldn't find group: \@$k\n"} : $_ } @_;
+        my %h; @h{@tmp} = ();
+        sort keys %h;
+    };
 
     my $o = my $l = $this->{_host_width} || 0;
     for( map { length $this->_host_route_to_nick($_) } @h ) {

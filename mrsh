@@ -76,6 +76,12 @@ it.  Example:
     # list /tmp on all the hosts in @gr1
     mrsh @gr1 -- ls -al /tmp
 
+Host and group specifications that overlap are reduced to a unique set, so if
+C<@localhosts> contains C<host1> and C<@desktops> contains C<host1>, and for
+whatever reason C<-H host1> is also specified on the command line, ...
+
+... C<host1> will only appear in the hosts list just the one time.
+
 =over
 
 =item B<-->
