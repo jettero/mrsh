@@ -383,8 +383,17 @@ sub subst_cmd_vars {
                     splice @_, $i+1, 0, @_[0 .. $i-1] => $h;
 
                     unless( $this->{no_command_escapes} ) {
-                        s/\\/\\\\/g         for @_[$i+1 .. $#_];
-                        s/(?<=[^\\]) /\\ /g for @_[$i+1 .. $#_];
+                        for my $arg (@_[$i+1 .. $#_]) {
+
+                            # NOTE: This escaping is going to be an utter pain to maintain...
+
+                            $arg =~ s/\$/\\\$/g;
+
+                            if( $arg =~ m/[\s()]/ ) {
+                                $arg =~ s/"/\\"/g;
+                                $arg = "\"$arg\"";
+                            }
+                        }
                     }
                 }
             }
@@ -399,7 +408,7 @@ sub subst_cmd_vars {
     if( $this->{debug} ) {
         my @cmd = map {exists $h{$_} ? $h{$_} : $_} @_;
 
-        my @dt = map {"'$_'"} @cmd;
+        my @dt = map {"<$_>"} @cmd;
         $this->std_msg($$hostref, $h{'%c'}, 0, BOLD.BLACK."DEBUG: exec(@dt)");
 
         return @cmd;
