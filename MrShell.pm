@@ -34,7 +34,7 @@ sub _process_hosts {
     my @h = map { my $k = $_; $k =~ s/^\@// ? @{$this->{groups}{$k} or die "couldn't find group: \@$k\n"} : $_ } @_;
 
     my $o = my $l = $this->{_host_width} || 0;
-    for( map { length $_ } @h ) {
+    for( map { my $x = join "", m/(?:!|[^!]+$)/g; length $x } @h ) {
         $l = $_ if $_>$l
     }
     $this->{_host_width} = $l if $l != $o;
@@ -403,7 +403,7 @@ sub subst_cmd_vars {
             }
         }
 
-        $$hostref = $hosts[-1];
+        $$hostref = join "", $$hostref =~ m/(?:!|[^!]+$)/g; # the !s and last word
 
     } else {
         $h{'%h'} =~ s/\\!/!/g;
