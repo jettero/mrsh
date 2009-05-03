@@ -304,7 +304,11 @@ sub sigchld {
         # Fenwick has to say about it.
         $exit >>= 8;
 
-        $this->std_msg($host, $cmdno, 0, RED."-- shell exited with nonzero status exit($exit) --");
+        my $reset = RESET;
+        my $black = BOLD.BLACK;
+        my $red   = RESET.RED;
+
+        $this->std_msg($host, $cmdno, 0, "$black-- shell exited with nonzero status: $red$exit$black --");
     }
 
     $_[KERNEL]->yield( stall_close => $kid->ID, 0 );
