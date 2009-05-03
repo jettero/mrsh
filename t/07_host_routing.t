@@ -21,5 +21,5 @@ INDIRECT1: {
     my $host  = "via1!nombre";
     my @type1 = $shell->set_subst_vars('%h'=>$host)->subst_cmd_vars(\$host, @cmd);
     ok("@type1", "a b c via1 a b c nombre d e f via1 a b c via1 a b c nombre d e f nombre g h i j k l");
-    ok($host, "nombre");
+    ok($host, "!nombre");
 }
