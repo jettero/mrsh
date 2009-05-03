@@ -34,12 +34,19 @@ sub _process_hosts {
     my @h = map { my $k = $_; $k =~ s/^\@// ? @{$this->{groups}{$k} or die "couldn't find group: \@$k\n"} : $_ } @_;
 
     my $o = my $l = $this->{_host_width} || 0;
-    for( map { my $x = join "", m/(?:!|[^!]+$)/g; length $x } @h ) {
+    for( map { length $this->_host_route_to_nick($_) } @h ) {
         $l = $_ if $_>$l
     }
     $this->{_host_width} = $l if $l != $o;
 
     @h;
+}
+# }}}
+# _host_route_to_nick {{{
+sub _host_route_to_nick {
+    my $this = shift;
+
+    join "", shift =~ m/(?:!|[^!]+$)/g
 }
 # }}}
 
@@ -387,11 +394,11 @@ sub subst_cmd_vars {
                     splice @c, $i+1, 0, @c[0 .. $i-1] => $h;
 
                     unless( $this->{no_command_escapes} ) {
-                        for my $arg (@c[$i+1 .. $#_]) {
+                        for my $arg (@c[$i+1 .. $#c]) {
 
                             # NOTE: This escaping is going to be an utter pain to maintain...
 
-                            $arg =~ s/\$/\\\$/g;
+                            $arg =~ s/([`\$])/\\$1/g;
 
                             if( $arg =~ m/[\s()]/ ) {
                                 $arg =~ s/([\\"])/\\$1/g;
@@ -403,7 +410,7 @@ sub subst_cmd_vars {
             }
         }
 
-        $$hostref = join "", $$hostref =~ m/(?:!|[^!]+$)/g; # the !s and last word
+        $$hostref = $this->_host_route_to_nick($$hostref);
 
     } else {
         $h{'%h'} =~ s/\\!/!/g;
