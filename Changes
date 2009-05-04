@@ -3,25 +3,28 @@
    - added more docs to mrsh, fixed sigchild handling
 
 2.0000: Sat May  2 16:49:19 EDT 2009
-   - Turn early non-H group arguments into -H options automagically
-   - I think this is ready for public consumption.  I'm going to install it and
-     fart around with it a little first though.
+   - Turn early non-H group arguments into -H options
+     automagically
+   - I think this is ready for public consumption.  I'm going to
+     install it and fart around with it a little first though.
 
 2.0000: Sat May  2 09:23:09 EDT 2009
    - docs for mrsh
    - docs for App::MrShell
 
 2.0000: Sat May  2 07:36:41 EDT 2009
-   - hooray, I got the host routing stuff to actually work.  I proved it out on
-     a test, but it wasn't terribly convincing.  Then I used this: mrsh -H
-     'corky!wisp!corky!razor!webserver' 'touch /tmp/holy\ shit' The escapes for
-     that are tricky to get right, but it *is* possible.
+   - hooray, I got the host routing stuff to actually work.  I
+     proved it out on a test, but it wasn't terribly convincing.
+     Then I used this: mrsh -H 'corky!wisp!corky!razor!webserver'
+     'touch /tmp/holy\ shit' The escapes for that are tricky to
+     get right, but it *is* possible.
 
 2.0000: Wed Apr 29 21:54:02 EDT 2009
    - added all kinds of bells and whistles (ok, bugfixes)
    - made the t/05 meaningful
    - convinced MrShell to allow commands with various subst vars
-   - made the t/05 test *portable*, rather than using external linux commands
+   - made the t/05 test *portable*, rather than using external
+     linux commands
 
 2.0000: Wed Apr 29 21:33:06 EDT 2009
    - This is practically a finished product.
