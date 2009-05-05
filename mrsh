@@ -14,6 +14,7 @@ my $shell;
 my $trunc;
 my $debug;
 my $no_esc;
+my $show_groups_and_exit;
 
 # turn all early group arguments without -H into -H options
 for(my $i=0; $i<@ARGV and $ARGV[$i] =~ m/^\@[\w\d]/; $i++)
@@ -21,7 +22,7 @@ for(my $i=0; $i<@ARGV and $ARGV[$i] =~ m/^\@[\w\d]/; $i++)
 
 Getopt::Long::Configure("bundling"); # make switches case sensitive (and turn on bundling)
 GetOptions(
-
+    "groups|list|g|l" => $show_groups_and_exit,
     "version|v" => sub { print "This is Mr. Shell version $App::MrShell::VERSION.\n\n"; pod2usage() },
     "host|H=s@" => \@hosts,
     "conf|c:s"  => \$conf, # optional value
