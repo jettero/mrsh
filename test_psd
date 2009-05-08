@@ -2,10 +2,34 @@
 
 use strict;
 use warnings;
+use Text::Balanced;
 use Data::Dump qw(dump);
 
-my $input  = q(supz '"supz", awesome');
-my @output = main->_process_space_delimited($input);
+my $input  = q(perl -e 'open my $out, ">file" or die "supz: $!"');
+
+# [08:23] Altreus!!: jettero: Do what LeoNerd does and go through the string until you find it starts with \s+'
+# [08:26] Altreus: while (length $str) { if ($str =~ m/^\s+'/) { use T::B } else { my @spl = split $str, / /, 2; push @parts, 
+#                  $str[0]; $str = $spl[1] }
+# [08:26] Altreus!!: jettero: ^
+# [08:26] Altreus: er s/$str[0]/$spl[0]/
+
+my @output;
+while( length $input ) {
+    if( $input =~ m/^['"]/ ) {
+        my ($tok, $rem) = Text::Balanced::extract_delimited($input, qr(["']));
+        push @output, $tok;
+        $input = $rem;
+
+    } else {
+        my ($tok, $rem) = split m/\s+/, $input, 2; 
+        push @output, $tok;
+        $input = $rem;
+    }
+}
+
+print "", dump(\@output), "\n";
+
+__END__
 
 print "", dump(\@output), "\n";
 
