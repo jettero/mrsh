@@ -90,16 +90,46 @@ sub set_shell_command_option {
 # }}}
 # set_group_option {{{
 sub set_group_option {
-    my $this  = shift;
+    my $this   = shift;
+    my $groups = ($this->{groups} ||= {});
 
     my ($name, $value);
     while( ($name, $value) = splice @_, 0, 2 and $name and $value ) {
         if( ref($value) eq "ARRAY" ) {
-            $this->{groups}{$name} = [ @$value ]; # make a real copy
+            $groups->{$name} = [ @$value ]; # make a real copy
 
         } else {
-            $this->{groups}{$name} = [ $this->_process_space_delimited( $value ) ];
+            $groups->{$name} = [ $this->_process_space_delimited( $value ) ];
         }
+    }
+
+    my @groups = keys %{ $this->{groups} };
+    REPLACE_GROPUS: {
+        my $replaced = 0;
+
+        for my $group (@groups) {
+            my $hosts = $groups->{$group};
+
+            my $r = 0;
+            for(@$hosts) {
+                if( m/^@(.+)/ ) {
+                    if( my $g = $groups->{$1} ) {
+                        $_ = $g;
+
+                        $r ++;
+                    }
+                }
+            }
+
+            if( $r ) {
+                my %h;
+                @h{ map {ref $_ ? @$_ : $_} @$hosts } = ();
+                $groups->{$group} = [ keys %h ];
+                $replaced ++;
+            }
+        }
+
+        redo if $replaced;
     }
 
     $this;
