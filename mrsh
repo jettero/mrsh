@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Getopt::Long;
+use Getopt::Long; Getopt::Long::Configure("bundling"); # make switches case sensitive (and turn on bundling)
 use Pod::Usage;
 
 use App::MrShell;
@@ -16,24 +16,32 @@ my $debug;
 my $no_esc;
 my $show_groups_and_exit;
 
-# turn all early group arguments without -H into -H options
-for(my $i=0; $i<@ARGV and $ARGV[$i] =~ m/^(?:\@[\w\d]|-g$)/; $i++)
-    { next if $ARGV[$i] eq "-g"; splice @ARGV, $i++, 0, '-H'; }
+my @orig_ARGV = @ARGV;
+MAGICALLY_UNDERSTAND_HOSTGROUPS: {
+    GetOptions(
+        "groups|list|g" => \$show_groups_and_exit,
+        "version|v"     => sub { print "This is Mr. Shell version $App::MrShell::VERSION.\n\n"; pod2usage() },
+        "host|H=s@"     => \@hosts,
+        "conf|c:s"      => \$conf, # optional value
+        "noesc|N"       => \$no_esc,
+        "log|l=s"       => \$log,
+        "trunc|t"       => \$trunc, # whether to truncate the log file
+        'debug|d:i'     => \$debug,
+        "shell|s=s"     => \$shell,
+        "help|h"        => sub { pod2usage(-verbose=>1) },
 
-Getopt::Long::Configure("bundling"); # make switches case sensitive (and turn on bundling)
-GetOptions(
-    "groups|list|g" => \$show_groups_and_exit,
-    "version|v"     => sub { print "This is Mr. Shell version $App::MrShell::VERSION.\n\n"; pod2usage() },
-    "host|H=s@"     => \@hosts,
-    "conf|c:s"      => \$conf, # optional value
-    "noesc|N"       => \$no_esc,
-    "log|l=s"       => \$log,
-    "trunc|t"       => \$trunc, # whether to truncate the log file
-    'debug|d:i'     => \$debug,
-    "shell|s=s"     => \$shell,
-    "help|h"        => sub { pod2usage(-verbose=>1) },
+    ) or pod2usage(); do{ warn "ERROR: command required\n"; pod2usage()} unless @ARGV or $show_groups_and_exit;
 
-) or pod2usage(); do{ warn "ERROR: command required\n"; pod2usage()} unless @ARGV or $show_groups_and_exit;
+    if( $ARGV[0] =~ m/^\@/ ) {
+        while( $ARGV[0] =~ m/^\@/) {
+            @orig_ARGV = map { $_ eq $ARGV[0] ? ('-H'=>$_) : ($_) } @orig_ARGV;
+            shift @ARGV;
+        }
+
+        @ARGV = @orig_ARGV;
+        redo MAGICALLY_UNDERSTAND_HOSTGROUPS;
+    }
+}
 
 my $mrsh = App::MrShell->new->set_usage_error("pod2usage");
 

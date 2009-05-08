@@ -1,3 +1,6 @@
+2.0100: Fri May  8 10:34:04 EDT 2009
+   - improved group arg processing, requires further testing and documentation
+
 2.0100: Fri May  8 10:19:49 EDT 2009
    - redid the command splitter so it can handle things like perl
      (see t/06)
