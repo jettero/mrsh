@@ -1,8 +1,10 @@
-2.0100: Fri May  8 11:11:24 EDT 2009
-   - added an experimental recursive group replacer, so @all = @dt @us will work
-
-2.0100: Fri May  8 10:34:04 EDT 2009
-   - improved group arg processing, requires further testing and documentation
+2.0100: Fri May  8 17:24:06 EDT 2009
+   - added the conditional argument processing and username
+     splitting for non-routed cases
+   - added an experimental recursive group replacer, so @all =
+     @dt @us will work
+   - improved group arg processing, requires further testing and
+     documentation
 
 2.0100: Fri May  8 10:19:49 EDT 2009
    - redid the command splitter so it can handle things like perl

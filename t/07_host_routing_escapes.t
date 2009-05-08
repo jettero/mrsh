@@ -23,7 +23,7 @@ INDIRECT1: {
 }
 
 INDIRECT1: {
-    @cmd = map {my @a = map {$_ eq '%h' ? $_ : substr $_, 0, 1} split; "@a"} @App::MrShell::DEFAULT_SHELL_COMMAND;
+    @cmd = map {my @a = map { (m/^\[/ or $_ eq '%h') ? $_ : substr $_, 0, 1} split; "@a"} @App::MrShell::DEFAULT_SHELL_COMMAND;
     # do { local $" = ")("; warn " wtf(@cmd)\n" };
 
     my $host  = "via1!via2!via3!nombre";

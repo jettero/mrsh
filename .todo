@@ -11,6 +11,12 @@
             </note>
         </note>
     </note>
+    <note priority="veryhigh" time="1241521654" done="1241779737">
+        create a switch to show groups and exit, show results wrt @ARGV if applicable
+    </note>
+    <note priority="veryhigh" time="1241802385" done="1241812296">
+        there needs to be a way to specify users at hosts... I'm thinking user@host!user@host!user@host, but that then requires conditional arguments in the shell command so -l %u will work when there's a %u and -l won't be presented when there isn't a %u...  Oh, and it requires %u ...
+    </note>
     <note priority="high" time="1240931521" done="1240940272">
         run_command should queue commands that can be run consequtively on each host
     </note>
@@ -56,9 +62,6 @@
     <note priority="medium" time="1241265330" done="1241297347">
         recognize @group arguments as -H @group arguments under certain circumstances: e.g. mrsh @group uptime should work, but mrsh -H corky uptime @group should not, but what are the conditions precisely?
     </note>
-    <note priority="veryhigh" time="1241521654" done="1241779737">
-        create a switch to show groups and exit, show results wrt @ARGV if applicable
-    </note>
     <note priority="high" time="1241223895">
         if ssh exits non-zero, it's noteworthy, show it
     </note>
@@ -88,6 +91,15 @@
     </note>
     <note priority="medium" time="1241377810">
         add option to avoid uniqueing the hosts list
+    </note>
+    <note priority="medium" time="1241804983">
+        documenation
+        <note priority="medium" time="1241804972" done="1241815268">
+            recursive group replacement
+        </note>
+        <note priority="medium" time="1241805048">
+            %u and user@host
+        </note>
     </note>
     <note priority="low" time="1241277277">
         consider a command separator to break up @ARGV before sending to queue_command(), silly really, since mrsh 'ls | grep' and 'touch file; cat file' work fine.

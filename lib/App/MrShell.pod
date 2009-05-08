@@ -107,15 +107,19 @@ shell sort it out.
 
 Set any built in or extra subst vars.  These will only ever be set once per
 L</subst_cmd_vars>() call, so setting built-in keys will override the built-in
-values.
+values, with the exception of C<%u> at least and C<%u> during host-routing mode
+-- since those are special subst vars, their substitutions will be difficult to
+override.
 
 =item B<subst_cmd_vars>
 
 Substitute command vars, including the special magic of host routing and the
-escaping associated with it.  So far there are only the two built-in subst vars:
-C<%h> (hostname) and C<%n> (command number).
+escaping associated with it (e.g. C<%h> for the hostname).   These are better
+documented in the L<mrsh/COMMAND ESCAPES> section.
 
-Others (that is non supported substs) can be added with L</set_subst_vars>().
+Others (that is non-internal substs) can be added with L</set_subst_vars>(),
+although C<%h> and C<%u> are magic and setting them manually probably won't
+work.
 
 As arguments, the function takes the command, upon which substitution should
 occur, as an array.
