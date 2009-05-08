@@ -1,0 +1,12 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use Data::Dump qw(dump);
+
+sub _process_space_delimited {
+    my $this = shift;
+
+    return
+        grep {defined} ($_[0] =~ m/["']([^"']*?)["']|(\S+)/g)
+}   

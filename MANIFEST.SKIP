@@ -1,8 +1,9 @@
-^\.git
+^05_touch\.log
 ^App$
+^\.git
+^go$
 ^MANIFEST\.SKIP$
 ^\.pm-desc.html$
 ^\.st$
+^test_psd$
 ^\.todo$
-^go$
-05_touch.log
