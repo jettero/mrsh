@@ -52,7 +52,6 @@ sub show_groups_and_exit {
     my %groups = $mrsh->groups;
     my @groups = sort keys %groups;
 
-    warn "hosts: @hosts";
     if( my @h = grep {s/^@//} @hosts ) {
         @groups = @h;
     }
