@@ -9,7 +9,7 @@ use Config::Tiny;
 use POE qw( Wheel::Run );
 use Term::ANSIColor qw(:constants);
 
-our $VERSION = '2.0000';
+our $VERSION = '2.0100';
 our @DEFAULT_SHELL_COMMAND = (ssh => '-o', 'BatchMode yes', '-o', 'StrictHostKeyChecking no', '-o', 'ConnectTimeout 20', '%h');
 
 # new {{{
@@ -148,6 +148,15 @@ sub set_no_command_escapes_option {
 
     $this->{no_command_escapes} = 1;
     $this;
+}
+# }}}
+
+# groups {{{
+sub groups {
+    my $this = shift;
+
+    return unless $this->{groups};
+    return wantarray ? %{$this->{groups}} : $this->{groups};
 }
 # }}}
 

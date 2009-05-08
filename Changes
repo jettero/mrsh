@@ -1,3 +1,6 @@
+2.0100: Fri May  8 06:49:13 EDT 2009
+   - added -g to list groups, found I was vimming my mrshrc quite often
+
 2.0000: Sat May  2 17:30:02 EDT 2009
    - not ready to release yet, ... I keep adding things.
    - added more docs to mrsh, fixed sigchild handling

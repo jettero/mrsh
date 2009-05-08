@@ -17,27 +17,28 @@ my $no_esc;
 my $show_groups_and_exit;
 
 # turn all early group arguments without -H into -H options
-for(my $i=0; $i<@ARGV and $ARGV[$i] =~ m/^\@[\w\d]/; $i++)
-    { splice @ARGV, $i++, 0, '-H'; }
+for(my $i=0; $i<@ARGV and $ARGV[$i] =~ m/^(?:\@[\w\d]|-g$)/; $i++)
+    { next if $ARGV[$i] eq "-g"; splice @ARGV, $i++, 0, '-H'; }
 
 Getopt::Long::Configure("bundling"); # make switches case sensitive (and turn on bundling)
 GetOptions(
-    "groups|list|g|l" => $show_groups_and_exit,
-    "version|v" => sub { print "This is Mr. Shell version $App::MrShell::VERSION.\n\n"; pod2usage() },
-    "host|H=s@" => \@hosts,
-    "conf|c:s"  => \$conf, # optional value
-    "noesc|N"   => \$no_esc,
-    "log|l=s"   => \$log,
-    "trunc|t"   => \$trunc, # whether to truncate the log file
-    'debug|d:i' => \$debug,
-    "shell|s=s" => \$shell,
-    "help|h"    => sub { pod2usage(-verbose=>1) },
+    "groups|list|g" => \$show_groups_and_exit,
+    "version|v"     => sub { print "This is Mr. Shell version $App::MrShell::VERSION.\n\n"; pod2usage() },
+    "host|H=s@"     => \@hosts,
+    "conf|c:s"      => \$conf, # optional value
+    "noesc|N"       => \$no_esc,
+    "log|l=s"       => \$log,
+    "trunc|t"       => \$trunc, # whether to truncate the log file
+    'debug|d:i'     => \$debug,
+    "shell|s=s"     => \$shell,
+    "help|h"        => sub { pod2usage(-verbose=>1) },
 
-) or pod2usage(); pod2usage() unless @ARGV;
+) or pod2usage(); do{ warn "ERROR: command required\n"; pod2usage()} unless @ARGV or $show_groups_and_exit;
 
 my $mrsh = App::MrShell->new->set_usage_error("pod2usage");
 
    $mrsh->read_config($conf)                  if $conf;
+   show_groups_and_exit()                     if $show_groups_and_exit;
    $mrsh->set_logfile_option($log, $trunc)    if $log;
    $mrsh->set_shell_command_option($shell)    if $shell;
    $mrsh->set_debug_option($debug)            if defined $debug;
@@ -46,6 +47,31 @@ my $mrsh = App::MrShell->new->set_usage_error("pod2usage");
    $mrsh->set_hosts(@hosts)    # tell Mr. Shell where to run things
         ->queue_command(@ARGV) # queue a command for whatever hosts are set
         ->run_queue;           # tell POE to do what POE does
+
+sub show_groups_and_exit {
+    my %groups = $mrsh->groups;
+    my @groups = sort keys %groups;
+
+    warn "hosts: @hosts";
+    if( my @h = grep {s/^@//} @hosts ) {
+        @groups = @h;
+    }
+
+    unless(@groups) {
+        print "(no gropus to show)\n";
+        exit 0;
+    }
+
+    my $len = length $groups[0];
+    for(@groups) { $len = length $_ if length $_ > $len }
+
+    $len ++;
+    for(@groups) {
+        printf '%-*s %s', $len, "$_:", "@{ $groups{$_} }\n";
+    }
+
+    exit 0;
+}
 
 __END__
 
@@ -65,6 +91,8 @@ mrsh - Mr. Shell runs a command on multiple hosts
         --trunc   -t: overwrite logfile, rather than append
         --shell   -s: change the (remote-)shell command
         --noesc   -N: do not escape the sub commands during host-routing mode
+        --groups  -g: show groups and exit
+        --list      : (nickname for --groups)
         --          : not strictly an option, but good to put before commands
 
 =head1 DESCRIPTION
@@ -90,6 +118,10 @@ whatever reason C<-H host1> is also specified on the command line, ...
 Sometimes the option processor get confused by switches and options for the
 command being sent to the remote hosts.  B<--> tells the options parser to quit
 looking.
+
+=item B<--groups> B<-g> B<--list>
+
+List the groups and their hosts and exit.
 
 =item B<--host> B<-H>
 
