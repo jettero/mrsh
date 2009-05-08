@@ -8,6 +8,7 @@ use POSIX;
 use Config::Tiny;
 use POE qw( Wheel::Run );
 use Term::ANSIColor qw(:constants);
+use Text::Balanced;
 
 our $VERSION = '2.0100';
 our @DEFAULT_SHELL_COMMAND = (ssh => '-o', 'BatchMode yes', '-o', 'StrictHostKeyChecking no', '-o', 'ConnectTimeout 20', '%h');
@@ -23,9 +24,23 @@ sub new {
 # _process_space_delimited {{{
 sub _process_space_delimited {
     my $this = shift;
+    my $that = shift;
 
-    return
-        grep {defined} ($_[0] =~ m/["']([^"']*?)["']|(\S+)/g)
+    my @output;
+    while( $that ) {
+        if( $that =~ m/^['"]/ ) {
+            my ($tok, $rem) = Text::Balanced::extract_delimited($that, qr(["']));
+            push @output, $tok;
+            $that = $rem;
+
+        } else {
+            my ($tok, $rem) = split m/\s+/, $that, 2; 
+            push @output, $tok;
+            $that = $rem;
+        }
+    }
+
+    @output
 }
 # }}}
 # _process_hosts {{{
