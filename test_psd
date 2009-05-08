@@ -4,6 +4,11 @@ use strict;
 use warnings;
 use Data::Dump qw(dump);
 
+my $input  = q(supz '"supz", awesome');
+my @output = main->_process_space_delimited($input);
+
+print "", dump(\@output), "\n";
+
 sub _process_space_delimited {
     my $this = shift;
 
