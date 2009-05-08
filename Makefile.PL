@@ -15,6 +15,7 @@ WriteMakefile(
         'Config::Tiny'          => 0,
         'POE'                   => 0,
         'Term::ANSIColor'       => 0,
+        'Text::Balanced'        => 0,
     },  
 
     ($ExtUtils::MakeMaker::VERSION ge '6.48'?

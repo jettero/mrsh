@@ -9,7 +9,7 @@ plan tests => 3;
 my $res = eval {
     system($^X,
         "blib/script/mrsh",
-        "-s" => qq|$^X, "-e" '\$"="."; open TOUCH, ">test_file.\@ARGV"' '\%h' '\%n'|,
+        "-s" => qq|$^X "-e" '\$"="."; open TOUCH, ">test_file.\@ARGV"' '\%h' '\%n'|,
         "-l" => "05_touch.log", '--trunc',
         "-H" => 'a',
         "-H" => 'b',

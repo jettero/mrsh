@@ -28,13 +28,17 @@ sub _process_space_delimited {
 
     my @output;
     while( $that ) {
-        if( $that =~ m/^['"]/ ) {
+        if( $that =~ m/^\s*['"]/ ) {
             my ($tok, $rem) = Text::Balanced::extract_delimited($that, qr(["']));
+
+            ($tok =~ s/^(['"])// and $tok =~ s/$1$//) or die "internal error processing space delimited";
+
             push @output, $tok;
             $that = $rem;
 
         } else {
             my ($tok, $rem) = split m/\s+/, $that, 2; 
+
             push @output, $tok;
             $that = $rem;
         }
@@ -463,7 +467,7 @@ sub start_queue_on_host {
     );
 
     my $kid = POE::Wheel::Run->new(
-        Program     => [ $this->subst_cmd_vars(@{$this->{_shell_cmd}} => @$cmd) ],
+        Program     => [ my @debug_rq = ($this->subst_cmd_vars(@{$this->{_shell_cmd}} => @$cmd)) ],
         StdoutEvent => "child_stdout",
         StderrEvent => "child_stderr",
         CloseEvent  => "child_close",

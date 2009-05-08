@@ -1,5 +1,10 @@
+2.0100: Fri May  8 10:19:49 EDT 2009
+   - redid the command splitter so it can handle things like perl
+     (see t/06)
+
 2.0100: Fri May  8 06:49:13 EDT 2009
-   - added -g to list groups, found I was vimming my mrshrc quite often
+   - added -g to list groups, found I was vimming my mrshrc quite
+     often
 
 2.0000: Sat May  2 17:30:02 EDT 2009
    - not ready to release yet, ... I keep adding things.
