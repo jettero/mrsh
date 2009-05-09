@@ -3,7 +3,7 @@
 ^\.git
 ^go$
 ^MANIFEST\.SKIP$
-^\.pm-desc.html$
+^\.pm-
 ^\.st$
 ^test_psd$
 ^\.todo$
