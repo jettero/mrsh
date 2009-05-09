@@ -322,7 +322,7 @@ sub std_msg {
     my $time_str = strftime('%H:%M:%S', localtime);
 
     print $time_str,
-        sprintf(' %4s %-*s', "[$cmdno]", $this->{_host_width}+2, $host_msg),
+        sprintf(' %-*s', $this->{_host_width}+2, $host_msg),
             ( $fh==2 ? ('[',BOLD,YELLOW,'stderr',RESET,'] ') : () ), $msg, RESET, "\n";
 
     if( $this->{_log_fh} ) {
@@ -331,7 +331,7 @@ sub std_msg {
         # No point in printing colors, stripped anyway.  Formatting columns is
         # equally silly -- in append mode anyway.
         $host_msg = $host ? "$host: " : "";
-        print {$this->{_log_fh}} "$time_str [$cmdno] $host_msg", ($fh==2 ? "[stderr] " : ""), $msg, "\n";
+        print {$this->{_log_fh}} "$time_str $host_msg", ($fh==2 ? "[stderr] " : ""), $msg, "\n";
     }
 
     $this;
