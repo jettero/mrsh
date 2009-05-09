@@ -8,3 +8,4 @@
 ^test_psd$
 ^\.todo$
 \.log$
+\.par$
