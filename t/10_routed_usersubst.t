@@ -5,7 +5,7 @@ use warnings;
 use Test;
 use App::MrShell;
 
-plan tests => 5;
+plan tests => 6;
 
 my $shell = App::MrShell->new;
 my @cmd = (qw(a b [%u]c [%u]%u %u d %h));
@@ -39,6 +39,13 @@ ROUTEDWU: {
 ROUTEDWU: {
     my $host   = 'via1!via2!C@nombre'; # this failed for me IRL
     my @cmd    = (qw(ssh [%u]-l [%u]%u %h));
+    my @result = $shell->set_subst_vars('%h'=>$host)->subst_cmd_vars(@cmd);
+    ok("(@result)", '(ssh)(via1)(ssh)(via2)(ssh)(-l)(C)(nombre)');
+}
+
+ROUTEDWU: {
+    my $host   = 'via1!via2!C@nombre'; # no-no, *this* failed for me IRL
+    my @cmd    = (qw(ssh [%u]-l []%u %h));
     my @result = $shell->set_subst_vars('%h'=>$host)->subst_cmd_vars(@cmd);
     ok("(@result)", '(ssh)(via1)(ssh)(via2)(ssh)(-l)(C)(nombre)');
 }
