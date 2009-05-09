@@ -1,6 +1,7 @@
 Changes
 lib/App/MrShell.pod
 Makefile.PL
+make_par.sh
 MANIFEST
 mrsh
 MrShell.pm
