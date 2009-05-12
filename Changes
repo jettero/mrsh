@@ -1,3 +1,6 @@
+2.0203: Tue May 12 10:36:26 EDT 2009
+   - added a way to subtract hosts from the host list
+
 2.0201: Sat May  9 08:32:25 EDT 2009
    - why show the command number in the output?
 
