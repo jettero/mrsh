@@ -82,16 +82,12 @@ L<pod2usage|Pod::Usage/pod2usage>() information.  Example:
 
 =item B<set_hosts>
 
-Set the hosts, groups, and routed strings for the next L</queue_command>.
-Hosts have some special magic concerning groups.  Hosts that being with an C<@>
+Set the hosts, groups, and routed strings for the next L</queue_command>.  Hosts
+have some special magic concerning groups.  Hosts that being with an C<@>
 character are considered groups are are expanded that way (see
 L<config file|mrsh/[groups]>).
 
-Host and group specifications that overlap are reduced to a unique set, so if
-C<@localhosts> contains C<host1> and C<@desktops> contains C<host1>, and for
-whatever reason C<-H host1> is also specified on the command line, ...
-
-... C<host1> will only appear in the hosts list just the one time.
+Also see the section on L<--host|mrsh/--host -H> in the L<mrsh> documentation.
 
 =item B<queue_command>
 
@@ -115,7 +111,7 @@ override.
 
 Substitute command vars, including the special magic of host routing and the
 escaping associated with it (e.g. C<%h> for the hostname).   These are better
-documented in the L<mrsh/COMMAND ESCAPES> section.
+documented in the L<COMMAND ESCAPES|mrsh/COMMAND ESCAPES> section.
 
 Others (that is non-internal substs) can be added with L</set_subst_vars>(),
 although C<%h> and C<%u> are magic and setting them manually probably won't
