@@ -23,10 +23,13 @@ exit 0;
 
 sub on_start {
     my $child = POE::Wheel::Run->new(
-        Program     => [ ssh => 'localhost', "/bin/ls", "-1", getcwd() ],
+        Program     => [ ssh => '-t', 'localhost', (@ARGV?@ARGV:(qw(ls --color=auto -hl), getcwd())) ],
         StdoutEvent => "got_child_stdout",
         StderrEvent => "got_child_stderr",
         CloseEvent  => "got_child_close",
+
+        Conduit => "pty-pipe",
+        Winsize => [ 80, 25 ],
     );
 
     $_[KERNEL]->sig_child( $child->PID, "got_child_signal" );
