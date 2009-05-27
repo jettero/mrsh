@@ -23,7 +23,7 @@ exit 0;
 
 sub on_start {
     my $child = POE::Wheel::Run->new(
-        Program     => [ ssh => '-t', 'localhost', (@ARGV?@ARGV:(qw(ls --color=auto -hl), getcwd())) ],
+        Program     => [ ssh => '-t', 'localhost', (@ARGV ? @ARGV : (qw(ls --color=auto -hl), getcwd())) ],
         StdoutEvent => "got_child_stdout",
         StderrEvent => "got_child_stderr",
         CloseEvent  => "got_child_close",
