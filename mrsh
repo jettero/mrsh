@@ -181,7 +181,7 @@ space delimited but understand very simple quoting:
 =item B<--noesc> B<-N>
 
 During host routing mode, L<mrsh> will escape spaces and backslashes in a way
-that L<openssh|http://openssh.com/> will understand correctly.  That behavior
+that openssh (L<http://openssh.com/>) will understand correctly.  That behavior
 can be completely disabled with this option.
 
 =back
@@ -209,7 +209,7 @@ the command array up to that escape, plus the hostname, for each host in the
 hosts route.
 
 This expansion also optionally (see B<-N> above) expands spaces and slashes to
-escaped values compatible with L<openssh|http://openssh.com/>.
+escaped values compatible with openssh (L<http://openssh.com/>).
 
 This is perhaps more clear by example.
 

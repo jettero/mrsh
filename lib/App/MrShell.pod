@@ -95,9 +95,9 @@ Push a command into the stack for the given hosts (specified by L</set_hosts> or
 by the default hosts in the L<config file|mrsh/CONFIG FILE>).
 
 Commands are pushed as an array, although, given the nature of
-L<openssh|http://openssh.com/> it's probably ok to pass in the command as a
-single string; or even to pass in multiple commands, C<;> separated and let the
-shell sort it out.
+L<http://openssh.com/> it's probably ok to pass in the command as a single
+string; or even to pass in multiple commands, C<;> separated and let the shell
+sort it out.
 
 =item B<set_subst_vars>
 
@@ -140,9 +140,9 @@ the L<config file|mrsh/CONFIG FILE>.
 
 =head1 REPORTING BUGS / REQUEST FEATURES
 
-You can report bugs either via L<rt.cpan.org|http://rt.cpan.org> or via the
-issue tracking system on L<github|http://github.com/jettero/mrsh/issues>.  I'm
-likely to notice either fairly quickly.
+You can report bugs either via L<http://rt.cpan.org/> or via the issue tracking
+system on github (L<http://github.com/jettero/mrsh/issues>).  I'm likely to
+notice either fairly quickly.
 
 For feature requests, just go ahead and email me.  I've never minded a
 discussion of this nature yet.
