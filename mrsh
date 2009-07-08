@@ -32,14 +32,14 @@ MAGICALLY_UNDERSTAND_HOSTGROUPS: {
 
     ) or pod2usage(); do{ warn "ERROR: command required\n"; pod2usage()} unless @ARGV or $show_groups_and_exit;
 
-    no warnings 'uninitialized';
+    no warnings 'uninitialized'; ## no critic: this is a stupid warning anyway
     if( $ARGV[0] =~ m/^\@/ ) {
         while( $ARGV[0] =~ m/^\@/) {
             @orig_ARGV = map { $_ eq $ARGV[0] ? ('-H'=>$_) : ($_) } @orig_ARGV;
             shift @ARGV;
         }
 
-        @ARGV = @orig_ARGV;
+        @ARGV = @orig_ARGV; ## no critic: no I really really meant to change the global one, thanks
         redo MAGICALLY_UNDERSTAND_HOSTGROUPS;
     }
 }
@@ -61,7 +61,7 @@ sub show_groups_and_exit {
     my %groups = $mrsh->groups;
     my @groups = sort keys %groups;
 
-    if( my @h = grep {s/^@//} @hosts ) {
+    if( my @h = grep {s/^@//} @hosts ) { ## no critic: bah
         @groups = @h;
     }
 
