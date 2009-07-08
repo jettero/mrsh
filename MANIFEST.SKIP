@@ -9,4 +9,4 @@
 ^\.todo$
 \.log$
 \.par$
-poe-wheel-run-example.pl
+^contrib
