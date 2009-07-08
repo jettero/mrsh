@@ -10,14 +10,15 @@ use POE qw( Wheel::Run );
 use Term::ANSIColor qw(:constants);
 use Text::Balanced;
 
-our $VERSION = '2.0203';
+our $VERSION = '2.0205';
 our @DEFAULT_SHELL_COMMAND = (ssh => '-o', 'BatchMode yes', '-o', 'StrictHostKeyChecking no', '-o', 'ConnectTimeout 20', '[%u]-l', '[]%u', '%h');
 
 # new {{{
 sub new {
-    my $this = bless { hosts=>[], cmd=>[], _shell_cmd=>[@DEFAULT_SHELL_COMMAND] };
+    my $class = shift;
+    my $this  = bless { hosts=>[], cmd=>[], _shell_cmd=>[@DEFAULT_SHELL_COMMAND] }, $class;
 
-    $this;
+    return $this;
 }
 # }}}
 
@@ -44,7 +45,7 @@ sub _process_space_delimited {
         }
     }
 
-    @output
+    return @output
 }
 # }}}
 # _process_hosts {{{
@@ -70,14 +71,14 @@ sub _process_hosts {
 
     $this->{_host_width} = $l if $l != $o;
 
-    @h;
+    return @h;
 }
 # }}}
 # _host_route_to_nick {{{
 sub _host_route_to_nick {
     my $this = shift;
 
-    join "", shift =~ m/(?:!|[^!]+$)/g
+    return join "", shift =~ m/(?:!|[^!]+$)/g
 }
 # }}}
 
@@ -93,7 +94,7 @@ sub set_shell_command_option {
         $this->{_shell_cmd} = [ $this->_process_space_delimited($arg||"") ];
     }
 
-    $this;
+    return $this;
 }
 # }}}
 # set_group_option {{{
@@ -143,7 +144,7 @@ sub set_group_option {
         redo if $replaced;
     }
 
-    $this;
+    return $this;
 }
 # }}}
 # set_logfile_option {{{
@@ -153,7 +154,7 @@ sub set_logfile_option {
     my $trunc = shift;
 
     unless( our $already_compiled++ ) {
-        eval q {
+        my $load_ansi_filter_package = q {
             package App::MrShell::ANSIFilter;
             use Symbol;
             use Tie::Handle;
@@ -175,13 +176,17 @@ sub set_logfile_option {
                 $pfft;
             }
 
-        1} or die $@;
+        1};
+
+        eval $load_ansi_filter_package or die $@; ## no critic -- sometimes this kind of eval is ok
+        # (This probably isn't one of them.)
     }
 
-    open my $log, ($trunc ? ">" : ">>"), $file or croak "couldn't open $file for write: $!";
+    open my $log, ($trunc ? ">" : ">>"), $file or croak "couldn't open $file for write: $!"; ## no critic -- I mean to pass this around, shut up
 
     $this->{_log_fh} = App::MrShell::ANSIFilter::filtered_handle($log);
-    $this;
+
+    return $this;
 }
 # }}}
 # set_debug_option {{{
@@ -199,15 +204,17 @@ sub set_debug_option {
     }
 
     $this->{debug} = $val ? $val : 1;
-    $this;
+
+    return $this;
 }
 # }}}
 # set_no_command_escapes_option {{{
 sub set_no_command_escapes_option {
     my $this = shift;
 
-    $this->{no_command_escapes} = 1;
-    $this;
+    $this->{no_command_escapes} = shift || 0;
+
+    return $this;
 }
 # }}}
 
@@ -221,15 +228,19 @@ sub groups {
 # }}}
 
 # set_usage_error($&) {{{
-sub set_usage_error($&) {
+sub set_usage_error($&) { ## no critic -- prototypes are bad how again?
     my $this = shift;
     my $func = shift;
     my $pack = caller;
     my $name = $pack . "::$func";
     my @args = @_;
 
-    $this->{_usage_error} = sub { no strict 'refs'; $name->(@args) };
-    $this;
+    $this->{_usage_error} = sub {
+        no strict 'refs'; ## no critic -- how would you call this by name without this?
+        $name->(@args)
+    };
+
+    return $this;
 }
 # }}}
 # read_config {{{
@@ -269,7 +280,8 @@ sub set_hosts {
     my $this = shift;
 
     $this->{hosts} = [ $this->_process_hosts(@_) ];
-    $this;
+
+    return $this;
 }
 # }}}
 # queue_command {{{
@@ -296,7 +308,7 @@ sub queue_command {
         push @{$this->{_cmd_queue}{$h}}, [@_]; # make a real copy
     }
 
-    $this;
+    return $this;
 }
 # }}}
 # run_queue {{{
@@ -314,7 +326,7 @@ sub run_queue {
 
     POE::Kernel->run();
 
-    $this
+    return $this;
 }
 # }}}
 
@@ -342,7 +354,7 @@ sub std_msg {
         print {$this->{_log_fh}} "$time_str $host_msg", ($fh==2 ? "[stderr] " : ""), $msg, "\n";
     }
 
-    $this;
+    return $this;
 }
 # }}}
 
@@ -355,6 +367,8 @@ sub line {
 
     $$lineno ++;
     $this->std_msg($host, $cmdno, $fh, $line);
+
+    return;
 }
 # }}}
 
@@ -365,6 +379,8 @@ sub _sigchld_exit_error {
     $exit >>= 8;
 
     $this->std_msg("?", -1, 0, BOLD.RED."-- sigchld received for untracked pid($pid, $exit), probably a bug in Mr. Shell --");
+
+    return;
 }
 
 sub sigchld {
@@ -390,6 +406,8 @@ sub sigchld {
     }
 
     $_[KERNEL]->yield( stall_close => $kid->ID, 0 );
+
+    return;
 }
 # }}}
 # _close {{{
@@ -418,6 +436,8 @@ sub _close {
     } else {
         $_[KERNEL]->yield( stall_close => $wid, $count+1 );
     }
+
+    return;
 }
 # }}}
 # error_event {{{
@@ -427,8 +447,10 @@ sub error_event {
     my ($kid, $host, $cmdno, @c) = @{ delete $this->{_wid}{$wid} || return };
     delete $this->{_pid}{ $kid->PID };
 
-    $errstr = "remote end closed" if $operation eq "read" and !$errnum;
+    $errstr = "remote end closed" if $operation eq "read" and not $errnum;
     $this->std_msg($host, $cmdno, 0, RED."-- $operation error $errnum: $errstr --");
+
+    return;
 }
 # }}}
 
@@ -440,7 +462,7 @@ sub set_subst_vars {
         $this->{_subst}{$k} = $v unless exists $this->{_subst}{$k};
     }
 
-    $this;
+    return $this;
 }
 # }}}
 # subst_cmd_vars {{{
@@ -513,8 +535,8 @@ sub subst_cmd_vars {
     }
 
     @c = map {exists $h{$_} ? $h{$_} : $_}
-         map { m/^\[([^\[\]]+)\]/ ? ($h{$1} ? do{s/^\[\Q$1\E\]//; $_} : ()) : ($_) }
-         map { s/\[\]\%(\w+)/[\%$1]\%$1/; $_ }
+         map { m/^\[([^\[\]]+)\]/ ? ($h{$1} ? do{s/^\[\Q$1\E\]//; $_} : ()) : ($_) } ## no critic: why on earth not?
+         map { s/\[\]\%(\w+)/[\%$1]\%$1/; $_ }                                       ## no critic: why on earth not?
          @c;
 
     if( $this->{debug} ) {
@@ -522,7 +544,7 @@ sub subst_cmd_vars {
         $this->std_msg($host, $h{'%n'}, 0, BOLD.BLACK."DEBUG: exec(@c)");
     }
 
-    @c;
+    return @c;
 }
 # }}}
 # start_queue_on_host {{{
@@ -547,6 +569,8 @@ sub start_queue_on_host {
     my $lineno = 0;
     my $info = [ $kid, $host, $cmdno, \$lineno, @next ];
     $this->{_wid}{ $kid->ID } = $this->{_pid}{ $kid->PID } = $info;
+
+    return;
 }
 # }}}
 
@@ -575,6 +599,9 @@ sub poe_start {
     }
 
     delete $this->{_cmd_queue};
+
     return;
 }
 # }}}
+
+1;
