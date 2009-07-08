@@ -1,3 +1,9 @@
+2.0205: Wed Jul 08 2009
+   - Doc bugs (very indirectly) found by Hans Dieter Pearcey
+   - added perl critic and Test::Pod
+   - fix bugs (as in wrongful code execution) found by critic.t
+   - fixed many punctuation problems found by critic.t
+
 2.0203: Tue May 12 10:36:26 EDT 2009
    - added a way to subtract hosts from the host list
 
