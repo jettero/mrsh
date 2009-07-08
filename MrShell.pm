@@ -248,20 +248,20 @@ sub read_config {
 
     if( my $c = $this->{_conf}{options}{'logfile'} ) {
         my $t = $this->{_conf}{options}{'truncate-logfile'};
-        my $v = 1 if $t;
-           $v = 0 if $c =~ m/(?:no|false)/i;
+        my $v = ($t ? 1:0);
+           $v = 0 if $t =~ m/(?:no|false)/i;
 
-        $this->set_logfile_option($c, $t);
+        $this->set_logfile_option($c, $v);
     }
 
     if( my $c = $this->{_conf}{options}{'no-command-escapes'} ) {
-        my $v = 1 if $c;
+        my $v = ($c ? 1:0);
            $v = 0 if $c =~ m/(?:no|false)/i;
 
         $this->set_no_command_escapes_option( $v );
     }
 
-    $this;
+    return $this;
 }
 # }}}
 # set_hosts {{{
