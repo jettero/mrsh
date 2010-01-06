@@ -286,7 +286,7 @@ be the problem.
 
     [options]
         default-hosts = @debian-desktops
-        shell-command = ssh -o 'BatchMode Yes'
+        shell-command = ssh -o 'BatchMode Yes' [%u]-l []%u %h
 
     [groups]
         debian-desktops = wisp corky razor
