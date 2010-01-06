@@ -254,7 +254,7 @@ sub read_config {
     }
 
     if( my $c = $this->{_conf}{options}{'shell-command'} ) {
-        $this->set_shell_command_option( 1, $c );
+        $this->set_shell_command_option( $c );
     }
 
     if( my $c = $this->{_conf}{options}{'logfile'} ) {
