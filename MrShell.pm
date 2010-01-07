@@ -38,7 +38,7 @@ sub _process_space_delimited {
             $that = $rem;
 
         } else {
-            my ($tok, $rem) = split m/\s+/, $that, 2; 
+            my ($tok, $rem) = split ' ', $that, 2; 
 
             push @output, $tok;
             $that = $rem;
