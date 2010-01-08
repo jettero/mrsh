@@ -151,9 +151,13 @@ discussion of this nature yet.
 
 Paul Miller C<< <jettero@cpan.org> >>
 
+=head1 THANKS
+
+Dennis Boone -- L<http://github.com/drboone>
+
 =head1 COPYRIGHT
 
-Copyright 2009 Paul Miller -- released under the GPL
+Copyright 2009-2010 Paul Miller -- released under the GPL
 
 =head1 SEE ALSO
 

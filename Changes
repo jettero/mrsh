@@ -1,3 +1,8 @@
+2.0207: Fri Jan 08 2010
+   - Dennis Boone was kind enough to not only point out a serious
+     bug in the ssh command token processing, but find and fix
+     it (http://is.gd/5UxgX).  Thanks!!
+
 2.0205: Wed Jul 08 2009
    - Doc bugs (very indirectly) found by Hans Dieter Pearcey
    - added perl critic and Test::Pod
