@@ -16,3 +16,4 @@ t/09_simplest_usersubst.t
 t/10_routed_usersubst.t
 t/critic.t
 t/pod.t
+t/BorkedX.pm

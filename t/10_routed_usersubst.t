@@ -1,6 +1,7 @@
 
 use strict;
 use warnings;
+use t::BorkedX;
 
 use Test;
 use App::MrShell;
