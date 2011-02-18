@@ -92,8 +92,11 @@ sub set_shell_command_option {
     if( ref($arg) eq "ARRAY" ) {
         if( not $arg->[0] ) {
             $this->{_shell_cmd} = sub {
-                local @ARGV;
-                my (undef, $perl_program, @ARGV) = @$arg;
+                shift @$arg;
+                my $perl_program = shift @$arg;
+
+                local @ARGV = $this->subst_cmd_vars(@$arg, @_);
+
                 unless( defined( do $perl_program ) ) {
                     die $@ if $@;
                     die $! if $!;
@@ -442,8 +445,12 @@ sub _close {
     if( $count > 3 ) {
         my ($kid, $host, $cmdno, $lineno, @c) = @{ delete $this->{_wid}{$wid} };
 
-        $this->std_msg($host, $cmdno++, 0, BOLD.BLACK.'-- eof --') if $$lineno == 0;
+        $this->std_msg($host, $cmdno, 0, BOLD.BLACK.'-- eof --') if $$lineno == 0;
+
         if( @c ) {
+
+            $cmdno ++;
+
             $this->start_queue_on_host($_[KERNEL] => $host, $cmdno, @c);
             $this->std_msg($host, $cmdno, 0, BOLD.BLACK."-- starting: @{$c[0]} --");
         }
@@ -568,14 +575,17 @@ sub subst_cmd_vars {
 sub start_queue_on_host {
     my ($this, $kernel => $host, $cmdno, $cmd, @next) = @_;
 
-    # NOTE: used (and deleted) by subst_cmd_vars
-    $this->set_subst_vars(
-        '%h' => $host,
-        '%n' => $cmdno,
-    );
+    my $program;
+    if( ref($this->{_shell_cmd}) eq "CODE" ) {
+        $program = sub {
+            $this->set_subst_vars( '%h' => $host, '%n' => $cmdno );
+            $this->{_shell_cmd}->(@$cmd)
+        };
 
-    my $program = ref($this->{_shell_cmd}) eq "CODE" ? $this->{_shell_cmd}
-        : [ $this->subst_cmd_vars(@{$this->{_shell_cmd}} => @$cmd) ];
+    } else {
+        $this->set_subst_vars( '%h' => $host, '%n' => $cmdno );
+        $program = [ $this->subst_cmd_vars(@{$this->{_shell_cmd}} => @$cmd) ];
+    }
 
     my $kid = POE::Wheel::Run->new(
         Program     => $program,
