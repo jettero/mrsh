@@ -88,7 +88,25 @@ sub set_shell_command_option {
     my $arg = shift;
 
     if( ref($arg) eq "ARRAY" ) {
-        $this->{_shell_cmd} = [ @$arg ]; # make a real copy
+        if( not defined($arg->[0]) ) {
+            $this->{_shell_cmd} = sub {
+                local @ARGV;
+                my (undef, $perl_program, @ARGV) = @$arg;
+                unless( defined( do $perl_program ) ) {
+                    die $@ if $@;
+                    die $! if $!;
+                    die "execution failure for $perl_program";
+                }
+
+                return;
+            };
+
+        } else {
+            $this->{_shell_cmd} = [ @$arg ]; # make a real copy
+        }
+
+    } elsif( ref($arg) eq "CODE" ) {
+        $this->{_shell_cmd} = $arg;
 
     } else {
         $this->{_shell_cmd} = [ $this->_process_space_delimited($arg||"") ];
@@ -557,8 +575,11 @@ sub start_queue_on_host {
         '%n' => $cmdno,
     );
 
+    my $program = ref($this->{_shell_cmd}) eq "CODE" ? $this->{_shell_cmd}
+        : [ $this->subst_cmd_vars(@{$this->{_shell_cmd}} => @$cmd) ];
+
     my $kid = POE::Wheel::Run->new(
-        Program     => [ my @debug_rq = ($this->subst_cmd_vars(@{$this->{_shell_cmd}} => @$cmd)) ],
+        Program     => $program,
         StdoutEvent => "child_stdout",
         StderrEvent => "child_stderr",
         CloseEvent  => "child_close",
