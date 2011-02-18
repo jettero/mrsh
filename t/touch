@@ -1,0 +1,8 @@
+#!/usr/bin/perl
+
+use strict;
+
+$" = ".";
+open TOUCH, ">test_file.@ARGV" or die $!;
+close TOUCH;
+exit;
