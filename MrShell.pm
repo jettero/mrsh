@@ -88,7 +88,7 @@ sub set_shell_command_option {
     my $arg = shift;
 
     if( ref($arg) eq "ARRAY" ) {
-        if( not defined($arg->[0]) ) {
+        if( not $arg->[0] ) {
             $this->{_shell_cmd} = sub {
                 local @ARGV;
                 my (undef, $perl_program, @ARGV) = @$arg;
