@@ -87,6 +87,8 @@ sub set_shell_command_option {
     my $this = shift;
     my $arg = shift;
 
+    $arg = [ $this->_process_space_delimited($arg||"") ] unless ref $arg;
+
     if( ref($arg) eq "ARRAY" ) {
         if( not $arg->[0] ) {
             $this->{_shell_cmd} = sub {
@@ -107,9 +109,6 @@ sub set_shell_command_option {
 
     } elsif( ref($arg) eq "CODE" ) {
         $this->{_shell_cmd} = $arg;
-
-    } else {
-        $this->{_shell_cmd} = [ $this->_process_space_delimited($arg||"") ];
     }
 
     return $this;
