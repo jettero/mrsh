@@ -1,3 +1,9 @@
+2.0210: Fri Feb 18 2011
+   - made it easier to use Perl child processes as the ssh
+     command
+   - which incidentally fixes various problems with windows
+     builds
+
 2.0207: Fri Jan 08 2010
    - Dennis Boone was kind enough to not only point out a serious
      bug in the ssh command token processing, but find and fix
