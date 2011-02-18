@@ -4,15 +4,11 @@ use warnings;
 use Test;
 use App::MrShell;
 
-unless( $^X and -x $^X ) {
-    print "1..0 # SKIP \$^X has no perl\n";
-}
-
 plan tests => 5;
 
 my $res = eval {
     my $shell = App::MrShell->new
-        -> set_shell_command_option([$^X, "-e", '$"="."; open TOUCH, ">test_file.@ARGV"', '%h', '%n'])
+        -> set_shell_command_option([0, 't/touch', '%h', '%n'])
         -> set_hosts("a", "b")
         -> queue_command("c1")
         -> queue_command("c2")
