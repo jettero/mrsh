@@ -1,7 +1,6 @@
 
 use strict;
 use warnings;
-use t::BorkedX;
 use Test;
 
 plan tests => 1;
