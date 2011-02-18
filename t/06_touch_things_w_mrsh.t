@@ -7,15 +7,17 @@ use App::MrShell;
 plan tests => 3;
 
 my $res = eval {
-    system($^X,
-        "blib/script/mrsh",
-        "-s" => qq|$^X "-e" '\$"="."; open TOUCH, ">test_file.\@ARGV"' '\%h' '\%n'|,
+   local @ARGV = (
+        "-s" => qq|0 t/touch '\%h' '\%n'|,
         "-l" => "05_touch.log", '--trunc',
         "-H" => 'a',
         "-H" => 'b',
         'c3'
-    )
-    == 0
+    );
+
+    unless( defined(do "blib/script/mrsh") ) {
+        die "mrsh failure: $!$@"
+    }
 };
 
 ok( $res );
