@@ -4,6 +4,10 @@ use warnings;
 use Test;
 use App::MrShell;
 
+unless( $^X and -x $^X ) {
+    print "1..0 # SKIP \$^X has no perl\n";
+}
+
 plan tests => 5;
 
 my $res = eval {
